@@ -32,9 +32,27 @@
 			</div>
 		</div>
 	{/if}
-	{#if $step[states.signup.id]}
+	{#if $step[states.signup.id]?.[states.signup.form]}
 		<div class="max-w-[500px] w-full bg-secondary rounded-md flex flex-col justify-center items-center p-10">
-			<AccountsSignupForm on:submit={signup}/>
+			<AccountsSignupForm on:submit={(e) => {submit(e.detail)}}/>
+		</div>
+	{/if}
+	{#if $step[states.signup.id]?.[states.signup.loading]}
+		<div class="max-w-[500px] w-full bg-secondary rounded-md flex flex-col justify-center items-center p-10 text-white">
+			<h1 class="text-2xl sm:text-3xl text-center">Loading...</h1>
+		</div>
+	{/if}
+	{#if $step[states.signup.id]?.[states.signup.success]}
+		<div class="max-w-[500px] w-full bg-secondary rounded-md flex flex-col justify-center items-center p-10 text-white">
+			<h1 class="text-2xl sm:text-3xl text-center">Success!</h1>
+			<p class="text-center">Check your email for a confirmation link.</p>
+		</div>
+	{/if}
+	{#if $step[states.signup.id]?.[states.signup.error]}
+		<div class="max-w-[500px] w-full bg-secondary rounded-md flex flex-col justify-center items-center p-10">
+			<h1 class="text-2xl sm:text-3xl text-center">Error!</h1>
+			<p class="text-center">There was an error signing up. Please try again.</p>
+			<button on:click={() => retry()} class="btn btn-sm sm:btn-md btn-neutral">Retry</button>
 		</div>
 	{/if}
 </section>

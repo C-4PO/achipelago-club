@@ -1,6 +1,5 @@
-import { interpret, State } from 'xstate';
 import { flashCardMachine } from './machines';
-import { readable, derived } from 'svelte/store'
+import { derived } from 'svelte/store'
 import { stateIndex } from '$lib/features/utilities.js';
 import { useMachine } from '$lib/features/utilities.js';
 

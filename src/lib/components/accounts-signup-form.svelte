@@ -25,7 +25,7 @@
   const validate = (fields) => {
     try {
       validationSchema.validateSync(fields, { abortEarly: false })
-      return {}
+      return null
     } catch (error) {
       return error.inner.reduce((errors, innerError) => {
         return {
@@ -36,7 +36,7 @@
     }
   }
  const initialValues = {
-    imageFile: null,
+    avatarImage: null,
     username: ``,
     email: '',
     password: '',
@@ -44,11 +44,6 @@
   }
 
   const onSubmit = (values, { errors }) => {
-    console.log(errors)
-    debugger
-    if (Object.keys(errors).length) {
-      return
-    }
     dispatch('submit', values)
   }
 
@@ -62,9 +57,21 @@
   onSubmit={onSubmit}
   validate={validate}
   let:errors
+  let:setFieldValue
 >
   <Form class="flex flex-col w-full items-center" >
-    <AccountsAvatarPicker on:change={(avatar) => avatarFile = avatar} />
+    <Field name="avatarImage" label="Image File" let:field let:meta>
+      <div class="form-control w-full mb-2 flex items-center">
+        <AccountsAvatarPicker
+          on:change={(e) => {
+            setFieldValue('avatarImage', e.detail)
+          }}
+        />
+        {#if meta.touched && meta.error}
+          <span class="text-error mt-1 px-1">{meta.error}</span>
+        {/if}
+      </div>
+    </Field>
     <Field name="username" label="First Name" let:field let:meta>
       <div class="form-control w-full max-w-xs mb-2">
         <label class="label text-primary" for="username">Username</label>
@@ -108,7 +115,11 @@
           type="password"
           placeholder="Password"
           {...field}
-          on:input={field.handleInput}
+          on:change={(...args) =>{
+            
+            console.log(args)
+            field.handleInput(...args)
+          }}
           on:blur={field.handleBlur}
         />
         {#if meta.touched && meta.error}
@@ -116,18 +127,20 @@
         {/if}
       </div>
     </Field>
-    <Field name="terms" label="Terms And Conditions" let:field let:meta>
+    <Field name="agreeTermsAndConditions" label="Terms And Conditions" let:field let:meta>
       <div class="form-control w-full max-w-xs">
         <label class="cursor-pointer label justify-start">
           <input
             type="checkbox"
             class="checkbox checkbox-primary mr-2"
             {...field}
-            on:input={field.handleInput}
+            on:change={(e) => {
+              setFieldValue('agreeTermsAndConditions', e.target.checked)
+            }}
             on:blur={field.handleBlur}
-            class:checkbox-error={meta.error}
+            class:checkbox-error={meta.touched && meta.error}
           />
-          <span class="label-text text-left text-primary">I agree to the <span>terms and conditions</span></span>
+          <span class="label-text text-left text-primary" class:text-error={meta.error}>I agree to the <span>terms and conditions</span></span>
         </label>
       </div>
     </Field>

@@ -1,3 +1,5 @@
+import { singleFileUpload } from "../utilities";
+
 export const login = ({ email, password }) => {
   return fetch('/api/login', {
     method: 'POST',
@@ -17,18 +19,15 @@ export const login = ({ email, password }) => {
   })
 }
 
-export const signup = ({ firstName, lastName, email, password }) => {
-  return fetch('/api/sign-up', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      firstName,
-      lastName,
+export const signup = ({ avatarImage, username, email, password }) => {
+  return singleFileUpload({
+    url: '/api/sign-up',
+    file: avatarImage,
+    additionalData: {
+      username,
       email,
       password,
-    })
+    }
   }).then(async (response) => {
     if (response.ok) {
       const json = await response.json();

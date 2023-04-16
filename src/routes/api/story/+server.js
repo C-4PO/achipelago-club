@@ -3,7 +3,10 @@ import { serializeStory } from '$lib/features/story/serializers.js'
 import { processStory } from '$lib/features/story/utilities.js'
 import { translate, saveStory } from '$lib/features/story/functions.js'
 
-export const POST = async ({ request }) => {
+export const POST = async ({ request, locals: { supabase, getSession } }) => {
+  const session = await getSession()
+  const { user } = session || {}
+
   let {
     title,
     originalStory,
@@ -26,9 +29,10 @@ export const POST = async ({ request }) => {
     translatedSentences: translatedStorySentences
   })
 
-  const response = await saveStory({
+  const response = await saveStory(supabase, {
     story: serializedStory,
-    sentences: serializedSentences
+    sentences: serializedSentences,
+    user_id: user.id,
   })
 
   return new Response(JSON.stringify({ response }), { status: 200 })

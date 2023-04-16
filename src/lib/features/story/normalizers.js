@@ -12,7 +12,7 @@ const normalizeSentence = ({
 }
 
 export const normalizeStory = ({
-  Sentences = [],
+  Sentences,
   ...story
 } = {}) => {
   const sentences = Sentences.map(({

@@ -14,9 +14,8 @@ export function stateIndex(obj) {
   return newObj;
 }
 
-export async function singleFileUpload({ file, additionalData }) {
+export async function singleFileUpload({ url, file, additionalData }) {
   if (!file) {
-    alert("Please select a file to upload");
     return;
   }
 
@@ -28,21 +27,16 @@ export async function singleFileUpload({ file, additionalData }) {
     formData.append(key, value);
   }
 
-  const response = await fetch("/api/upload", {
+  return fetch(url, {
     method: "POST",
     body: formData,
   });
 
-  if (response.ok) {
-    alert("File uploaded successfully");
-  } else {
-    alert("Failed to upload file");
-  }
+  
 }
 
-async function multiFileUpload({ files, additionalData }) {
+async function multiFileUpload({ url, files, additionalData }) {
   if (!files.length) {
-    alert("Please select files to upload");
     return;
   }
 
@@ -58,16 +52,10 @@ async function multiFileUpload({ files, additionalData }) {
     formData.append(key, value);
   }
 
-  const response = await fetch("/api/upload", {
+  return await fetch(url, {
     method: "POST",
     body: formData,
   });
-
-  if (response.ok) {
-    alert("Files uploaded successfully");
-  } else {
-    alert("Failed to upload files");
-  }
 }
 
 export function useMachine(

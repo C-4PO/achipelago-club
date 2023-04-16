@@ -1,6 +1,6 @@
 <script>
 	import '@splidejs/svelte-splide/css';
-  import { stateIndex } from '$lib/features/story-review/utilities.js';
+  import { stateIndex } from '$lib/features/utilities.js';
   import { onMount } from 'svelte';
   import { interpret } from 'xstate';
   import { Splide, SplideSlide } from '@splidejs/svelte-splide';

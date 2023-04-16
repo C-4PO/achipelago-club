@@ -1,10 +1,14 @@
 import { createMachine, assign } from "xstate";
+import { signup } from "./api";
 
 const loginService = async (context, event) => {
+  console.log('here', event)
   // Your login logic with a Promise
               // Your login logic with a Promise
-            };
+};
 const signupService = async (context, event) => {
+  console.log('here', event)
+  return signup(event)
   // Your signup logic with a Promise
 };
 
@@ -38,6 +42,7 @@ export const states = {
 export const authMachine = createMachine(
   {
     id: "auth",
+    edictableActionArguments: true,
     initial: states.chooseOption,
     context: {
       errorContext: null,
@@ -91,7 +96,6 @@ export const authMachine = createMachine(
               [transitions.LOGIN]: `../../${states.login.id}/${states.login.form}`,
               [transitions.SUBMIT]: {
                 target: states.signup.loading,
-                cond: "hasCredentials",
               },
               [transitions.TERMS_AND_CONDITIONS]: states.signup.termsAndConditions,
             },
@@ -125,13 +129,4 @@ export const authMachine = createMachine(
       },
     },
   },
-  {
-    guards: {
-      hasCredentials: (context, event) => {
-        debugger
-        return event.username && event.password;
-      },
-    },
-  }
 );
-            

@@ -1,30 +1,17 @@
-import { supabase } from '$lib/features/supabase/config.js'
 import { login, signup } from '$lib/features/accounts/functions.js'
-import { redirect } from '@sveltejs/kit';
 
-export async function POST({ request }) {
-  const { email, password } = request.body;
+export async function POST({ request, locals: { supabase } }) {
+  const { email, password, avatarImage, username } = Object.fromEntries(await request.formData())
 
-  const { error: signedUpError } = await supabase.auth.signUp({
-    email,
-    password,
-  })
-
-  if (signedUpError) {
-    return {
-      status: 400,
-      body: JSON.stringify({ message: error.message }),
-    };
-  }
-
-
-  // login using supabase
-  const { user: loggedInUser, error: loginError } = await supabase.auth.signIn({
-    email,
-    password,
-  })
-
-  if (loggedInUser) {
-    throw redirect(302, '/story-list')
+  try {
+    const { user, error } = await signup(supabase, { email, password, avatarImage, username })
+    if (error) {
+      throw new Error(error.message)
+    }
+    if (user) {
+      return new Response(JSON.stringify({ user }), { status: 201 })  
+    }
+  } catch (error) {
+    return new Response(JSON.stringify({ message: error.message }), { status: 500 })  
   }
 }

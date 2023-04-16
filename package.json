@@ -30,6 +30,7 @@
 		"@google-cloud/translate": "^7.2.0",
 		"@poppanator/sveltekit-svg": "^3.0.0",
 		"@splidejs/svelte-splide": "^0.2.9",
+		"@supabase/auth-helpers-sveltekit": "^0.9.3",
 		"@supabase/supabase-js": "^2.13.1",
 		"@tailwindcss/typography": "^0.5.9",
 		"@xstate/fsm": "^2.0.0",

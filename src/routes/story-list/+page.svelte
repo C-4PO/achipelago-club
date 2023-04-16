@@ -1,5 +1,7 @@
 <script>
   export let data;
+
+  const stories = data.stories || [];
 </script>
 
 <section class="flex flex-col p-3">
@@ -15,7 +17,7 @@
     </div>
   </div>
   <ul class="overflow-auto">
-    {#each data.stories as story}
+    {#each stories as story}
       <li class="card bg-primary text-primary-content w-full mb-3">
         <div class="card-body flex">
           <h2 class="card-title">{story.title}</h2>

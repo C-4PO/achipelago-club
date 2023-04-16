@@ -3,29 +3,13 @@
   import StoryForm from '$lib/components/story-form.svelte';
   let saveWordsPromise = null;
 
-  async function saveWords({
-    title,
-    originalStory,
-    translatedStory
-  }) {
-    saveWordsPromise = fetch('/api/story', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        title,
-        originalStory,
-        translatedStory,
-      })
-    }).then(async (response) => {
-      if (response.ok) {
-        const json = await response.json();
-        return json;
-      }
-      throw new Error(response.statusText);
+  import { saveWords } from '$lib/features/story-generate/api.js';
+
+  const handleSaveWords = async (words) => {
+    saveWordsPromise = saveWords(words).catch(e => {
+      debugger
     });
-  }
+  };
 </script>
 
 {#if saveWordsPromise}
@@ -36,8 +20,9 @@
     </section>
   {:then json}
     <section class="flex flex-col p-3 items-center justify-center h-full">
-      <a class="btn btn-accent mb-3 w-[300px]">Story</a>
-      <a class="btn btn-accent mb-3 w-[300px]">List</a>
+      {JSON.stringify(json)}
+      <a href={`/story-review/${json.id}`} class="btn btn-accent mb-3 w-[300px]">Story</a>
+      <a href="/story-list" class="btn btn-accent mb-3 w-[300px]">List</a>
       <button class="btn btn-accent mb-3 w-[300px]">New</button>
     </section>
   {:catch error}
@@ -45,6 +30,6 @@
     <p>{JSON.stringify(error)}</p>
   {/await}
 {:else}
-  <StoryForm on:save={(event) => saveWords(event.detail)}/>
+  <StoryForm on:save={(event) => handleSaveWords(event.detail)}/>
 {/if}
 

@@ -15,6 +15,7 @@ export const flashCardMachine = createMachine(
   {
     id: 'flashcard',
     initial: states.intro,
+    predictableActionArguments: true,
     context: {
       currentCardIndex: 0,
       cards: [],

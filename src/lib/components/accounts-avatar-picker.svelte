@@ -23,7 +23,7 @@
     avatar.png().toDataUri().then((dataUri) => {
       const file = dataURLtoFile(dataUri);
       value = file
-      dispatch("change", { value: file });
+      dispatch("change", file);
       imageUrl = dataUri;
     });
   })
@@ -39,7 +39,7 @@
     if (file && supportedFiles.includes(file.type) && file.size <= maxSize) {
       value = file;
       imageUrl = URL.createObjectURL(value);
-      dispatch("change", { value });
+      dispatch("change", value);
     }
   }
 
