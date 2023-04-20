@@ -73,9 +73,14 @@ export const flashCardMachine = createMachine(
   },
   {
     actions: {
-      finishReview: (context) => {
-        console.log('Review complete:', context.reviews);
-      },
+      finishReview: assign({
+        reviewedCards: (context) => {
+          return [
+            ...context.reviewedCards.slice(0, context.currentCardIndex),
+            { summary: true, message: 'You have finished reviewing all your cards for today.' },
+          ]
+        }
+      }),
       computeCards: assign((context) => {
         const cards = context.cards; // get the current list of cards from context
         const scheduledCards = getCardsToReview(cards); // apply the algorithm

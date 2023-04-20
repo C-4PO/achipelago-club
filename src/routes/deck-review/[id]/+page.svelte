@@ -13,17 +13,6 @@
 
   $: card = $context.card
 </script>
-<div>
-{#each $context.reviewedCards as card}
-  <span>*</span>
-{/each}
-{#if $context.card}
-  <span>?</span>
-{/if}
-{#each $context.scheduledCards.slice(1) as card}
-  <span>X</span>
-{/each}
-</div>
 
 <button class="btn btn-primary btn-wide" on:click={() => send(transitions.START)}>Next</button>
 <button class="btn btn-primary btn-wide" on:click={() => send(transitions.REVIEWED, { review: {
