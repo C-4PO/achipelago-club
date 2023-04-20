@@ -1,4 +1,5 @@
 <script>
+  import Reviewer from '$lib/components/reviewer.svelte';
   export let data;
 
   const stories = data.stories || [];

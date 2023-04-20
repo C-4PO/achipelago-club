@@ -41,6 +41,7 @@
 		"dayjs": "^1.11.7",
 		"deepl-node": "^1.8.0",
 		"diff": "^5.1.0",
+		"dolphinsr": "^0.0.2",
 		"es-compromise": "^0.2.9",
 		"lodash": "^4.17.21",
 		"lorca-nlp": "^1.0.12",

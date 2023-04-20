@@ -1,15 +1,11 @@
 import { createMachine, assign } from "xstate";
-import { signup } from "./api";
+import { signup, login } from "./api";
 
 const loginService = async (context, event) => {
-  console.log('here', event)
-  // Your login logic with a Promise
-              // Your login logic with a Promise
+  return login(event)
 };
 const signupService = async (context, event) => {
-  console.log('here', event)
   return signup(event)
-  // Your signup logic with a Promise
 };
 
 export const transitions = {
@@ -62,7 +58,6 @@ export const authMachine = createMachine(
               [transitions.SIGNUP]: `../../${states.signup.id}/${states.signup.form}`,
               [transitions.SUBMIT]: {
                 target: states.login.loading,
-                cond: "hasCredentials",
               },
             },
           },

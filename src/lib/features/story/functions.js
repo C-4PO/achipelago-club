@@ -6,13 +6,14 @@ export  const translate = async({ text, from = "es", to ="en-US"}) => {
 }
 
 export const getStory = async (supabase, { storyId, userId }) => {
-  const { data, error, status } = await supabase
+  let { data, error, status } = await supabase
     .from('Users_Stories')
-    .select(`*, Storys(*, Sentences(*))`)
+    .select(`deck_id, Storys(Sentences(*, Concepts_Sentences(*)))`)
     .eq('user_id', userId)
     .eq('story_id', storyId)
     .limit(1)
     .single()
+  data = { ...data.Storys, deckId: data.deck_id}
   return { data, error, status }
 }
 
@@ -22,16 +23,27 @@ export const getStories = async (supabase, { userId }) => {
     .select(`*, Storys(*))`)
     .eq('user_id', userId)
     .limit(100)
-  data = data.map(({ Storys }) => Storys)
+  data = data.map(({ deck_id, Storys }) => ({...Storys, deckId: deck_id}))
   return { data, error, status }
 }
 
 export const getDecks = async (supabase, { userId }) => {
   const { data, error, status } = await supabase
     .from('Users_Decks')
-    .select('*, Decks(*)')
+    .select('Decks(*)')
     .eq('user_id', userId)
     .limit(100)
+  return { data, error, status }
+}
+
+export const getPersonalDeck = async (supabase, { userId }) => {
+  const { data, error, status } = await supabase
+    .from('Users_Decks')
+    .select('Decks(*)')
+    .eq('user_id', userId)
+    .eq('is_personal', true)
+    .limit(1)
+    .single()
   return { data, error, status }
 }
 
@@ -39,6 +51,7 @@ export const saveStory = async (supabase, {
   story,
   sentences,
   user_id,
+  deck_id
 }) => {
   const { data: savedStory, error: savedStoryError } = await supabase
     .from('Storys')
@@ -72,7 +85,8 @@ export const saveStory = async (supabase, {
     .from('Users_Stories')
     .insert({
       user_id: user_id,
-      story_id: savedStory.id
+      story_id: savedStory.id,
+      deck_id: deck_id,
     })
     .select()
     .limit(1)

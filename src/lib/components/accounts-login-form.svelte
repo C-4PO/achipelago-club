@@ -72,8 +72,6 @@
           placeholder="Password"
           {...field}
           on:change={(...args) =>{
-            
-            console.log(args)
             field.handleInput(...args)
           }}
           on:blur={field.handleBlur}

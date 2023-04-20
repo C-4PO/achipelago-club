@@ -4,8 +4,7 @@ export const login = async (supabase, { email, password }) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
-  }, )
-
+  })
   return { data, error }
 }
 
@@ -64,10 +63,7 @@ export const signup = async (supabase, {
   const { data: { user } = {}, error: signupError } = await supabase.auth.signUp({
     email,
     password,
-  },  {
-    metadata: {
-      username,
-  }})
+  })
 
   if (!user || signupError) {
     console.error(signupError)
@@ -88,7 +84,7 @@ export const signup = async (supabase, {
     data: deckData,
     error: deckError
   } = await saveDeck(supabase, {
-    title: `${username} Primary Deck`,
+    title: `Main Deck`,
     is_personal: true,
     backgroundImagePath:``,
   })
@@ -99,7 +95,6 @@ export const signup = async (supabase, {
   }
 
   const {
-    data: userProfileData,
     error: userProfileError
   } = await saveUserProfile(supabase, {
     user,

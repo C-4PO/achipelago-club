@@ -6,6 +6,7 @@
 	import { authService } from '$lib/features/accounts/services'
 
 	import AccountsSignupForm from '$lib/components/accounts-signup-form.svelte';
+	import AccountsLoginForm from '$lib/components/accounts-login-form.svelte';
 
 	const {
 		login,
@@ -28,7 +29,7 @@
 			<Logo class="fill-neutral w-[50%] mb-4 sm:mb-8 hover:fill-primary transition duration-300 ease-in-out"/>
 			<div class="flex gap-3">
 				<button on:click={() => signup()} class="btn btn-sm sm:btn-md btn-neutral">Sign Up</button>
-				<button class="btn btn-sm sm:btn-md btn-neutral">Login</button>
+				<button on:click={() => login()} class="btn btn-sm sm:btn-md btn-neutral">Login</button>
 			</div>
 		</div>
 	{/if}
@@ -52,6 +53,23 @@
 		<div class="max-w-[500px] w-full bg-secondary rounded-md flex flex-col justify-center items-center p-10">
 			<h1 class="text-2xl sm:text-3xl text-center">Error!</h1>
 			<p class="text-center">There was an error signing up. Please try again.</p>
+			<button on:click={() => retry()} class="btn btn-sm sm:btn-md btn-neutral">Retry</button>
+		</div>
+	{/if}
+	{#if $step[states.login.id]?.[states.login.form]}
+		<div class="max-w-[500px] w-full bg-secondary rounded-md flex flex-col justify-center items-center p-10">
+			<AccountsLoginForm on:submit={(e) => {submit(e.detail)}}/>
+		</div>
+	{/if}
+	{#if $step[states.login.id]?.[states.login.loading]}
+		<div class="max-w-[500px] w-full bg-secondary rounded-md flex flex-col justify-center items-center p-10 text-white">
+			<h1 class="text-2xl sm:text-3xl text-center">Loading...</h1>
+		</div>
+	{/if}
+	{#if $step[states.login.id]?.[states.login.error]}
+		<div class="max-w-[500px] w-full bg-secondary rounded-md flex flex-col justify-center items-center p-10">
+			<h1 class="text-2xl sm:text-3xl text-center">Error!</h1>
+			<p class="text-center">There was an error loging In Please try again.</p>
 			<button on:click={() => retry()} class="btn btn-sm sm:btn-md btn-neutral">Retry</button>
 		</div>
 	{/if}

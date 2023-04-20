@@ -1,7 +1,7 @@
 import { singleFileUpload } from "../utilities";
 
 export const login = ({ email, password }) => {
-  return fetch('/api/login', {
+  return fetch('/api/log-in', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

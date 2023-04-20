@@ -7,7 +7,6 @@
 	import { createEventDispatcher } from 'svelte';
   import { cleanSentence } from '$lib/features/story/utilities'
   import { getRemovedCharIndexes }  from '$lib/features/story-review/utilities'
-
 	
   const dispatch = createEventDispatcher();
 
@@ -17,6 +16,7 @@
   export let isFlipped = false
 
   let { front, back } = card
+
   let input = ''
   let errorIndexes = []
   let takenWords = []
@@ -92,9 +92,7 @@
    return {
       words,
       translationWords: tranlationWords,
-      metadata: {
-        type: values.type
-      }
+      type: values.type,
     }
   }
 
@@ -103,10 +101,8 @@
       onCantAdd()
       return
     }
-
     const concept = newConcept(values)
     concepts = [...concepts, concept]
-
     replaceWords(concepts)
     onAddWord()
   }
@@ -121,7 +117,13 @@
   }
 
   const onFinish = () => {
-    dispatch('review', { type: `NEXT_CARD`, input, errorIndexes, concepts })
+    dispatch('review', {
+      input,
+      errorIndexes,
+      concepts, sentenceId:
+      card.sentenceId,
+      deckId: card.deckId
+    })
   }
 </script>
 
