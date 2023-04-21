@@ -16,6 +16,8 @@
   const onReview = (review) => {
     dispatch('review', review);
   }
+
+  $: console.log('isSHow', isShow && isFocused && !isReviewed)
   
 </script>
 
@@ -45,9 +47,10 @@
     background-color: #2889a5;
     background-image: linear-gradient(180deg, #2889a5 0%, #2785a1 11%, #114b62 20%, #0a2132 30%, #121521 50%, #121523 100%);
   }
+
 </style>
 
-<div class=" flex items-center rounded-md" style="padding-top: 4vh; padding-bottom: 4vh">
+<div class="flex items-center rounded-md" style="padding-top: 4vh; padding-bottom: 4vh">
   <div class="perspective-1000 card">
     <div class:rotate-y-180={isShow && isFocused && !isReviewed} class="relative w-full h-full transform-60ms preserve-3d">
       <div class="rounded-[50px] card-side overflow-hidden absolute w-full h-full backface-visibility-hidden">

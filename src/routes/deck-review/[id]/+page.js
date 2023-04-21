@@ -12,8 +12,6 @@ export async function load({ params, parent }) {
 
   const { data: deckData = {}, error } = await getDeck(supabase, { deckId: params.id, userId: user.id })
 
-  // const 
-
   if (error) {
     console.error(error)
     return { error }

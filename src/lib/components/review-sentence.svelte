@@ -16,6 +16,8 @@
     isOriginal = _isOriginal
   }
 
+  $: console.log({ sentence })
+
   const clickWord = (word) => {
     dispatch('clickWord', word)
   }

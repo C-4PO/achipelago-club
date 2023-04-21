@@ -11,18 +11,35 @@ export const normalizeDeck = ({ deckData }) => {
         display_words_indexes: displayConceptSentenceIndexes,
         display_translation_words_indexes: displayTranslationConceptWordsIndexes,
       } = Concepts.Concepts_Sentences[0]
+      console.log({ sentence })
       return {
         id: Concepts.id,
         type: Concepts.type,
-        front: {
-          conceptWords: Concepts.words,
-          displayConceptWords,
-          sentenceWords: sentence.words,
-          displayConceptSentenceIndexes,
-          displaySentenceWords: sentence.display_words,
-          paragraph: sentence.paragraph,
-          isExclaimation: sentence.is_exclamation,
-          isQuestion: sentence.is_question,
+        front:{
+          concept: {
+            type: `concept`,
+            sentence: Concepts.words.map((word, index) => {
+              return {
+                word,
+                displayWord: displayConceptWords[index],
+                index,
+                isTakenWord: true,
+              }
+            }),
+          },
+          sentence: {
+            type: `sentence`,
+            sentence: sentence.words.map((word, index) => {
+              return {
+                word,
+                displayWord: sentence.display_words[index],
+                index,
+                isTakenWord: displayConceptSentenceIndexes.includes(index),
+              }
+            }),
+            isExclaimation: sentence.is_exclamation,
+            isQuestion: sentence.is_question,
+          }
         },
         back: {
           conceptWords: Concepts.translation_words,
@@ -37,5 +54,6 @@ export const normalizeDeck = ({ deckData }) => {
       }
     })
   }
+  console.log([ deck ])
   return deck
 }

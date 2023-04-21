@@ -21,10 +21,11 @@ export const flashCardMachine = createMachine(
     id: 'flashcard',
     initial: states.intro,
     context: {
+      enableShuffle: true,
       currentCardIndex: 0,
       cards: [], // modified by the spaced repetition algorithm
       card: null,
-      reviewedCards: [{}, {}],
+      reviewedCards: [{key: 1}, { key: 2}],
       scheduledCards: [], // the list of cards sorted by the spaced repetition algorithm
     },
     states: {
@@ -77,7 +78,7 @@ export const flashCardMachine = createMachine(
         reviewedCards: (context) => {
           return [
             ...context.reviewedCards.slice(0, context.currentCardIndex),
-            { summary: true, message: 'You have finished reviewing all your cards for today.' },
+            { key: context.currentCardIndex + 1, summary: true, message: 'You have finished reviewing all your cards for today.' },
           ]
         }
       }),
@@ -85,14 +86,16 @@ export const flashCardMachine = createMachine(
         const cards = context.cards; // get the current list of cards from context
         const scheduledCards = getCardsToReview(cards); // apply the algorithm
         const card = scheduledCards[0]; // get the next card to review
+        console.log(context.currentCardIndex)
+
         return {
           ...context,
           card,
           scheduledCards,
           reviewedCards: [
             ...context.reviewedCards.slice(0, context.currentCardIndex),
-            {...card, id: uuidv4() }
-            , {}
+            {...card, key: context.currentCardIndex + 1}
+            ,{key: context.currentCardIndex + 2}
           ]
         }
       }),
@@ -106,6 +109,9 @@ export const flashCardMachine = createMachine(
       updateCards: assign({ // update the context.cards array with the sorted list
         cards: (context) => {
           const scheduledCards = context.scheduledCards;
+          if (!context.enableShuffle) {
+            return scheduledCards
+          }
           return scheduledCards.slice(1).concat(scheduledCards[0]);
         },
       }),

@@ -20,12 +20,12 @@
   })
 </script>
 
-<div class="md:max-w-[800px] mx-auto p-3 h-screen flex flex-col">
+<div class="md:max-w-[717px] cardwidth:w-[450px] md:w-[717px] mx-auto p-3 flex flex-col">
 	<header class="navbar bg-base-10 mb-3 bg-neutral rounded-md" >
 		<a class="btn btn-ghost normal-case text-xl">Archipelago Club</a>
 	</header>
 
-	<main class="w-100 h-full bg-neutral rounded-md mb-3 overflow-auto">
+	<main class="w-100 max-h-full bg-neutral rounded-[50px] md:rounded mb-3 overflow-hidden">
 		<slot></slot>
 	</main>
 </div>
