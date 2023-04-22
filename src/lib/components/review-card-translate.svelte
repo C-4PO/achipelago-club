@@ -10,7 +10,6 @@
 	
   const dispatch = createEventDispatcher();
 
-  export let step
   export let card
 
   export let isFlipped = false

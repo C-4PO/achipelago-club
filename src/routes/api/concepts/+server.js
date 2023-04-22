@@ -6,7 +6,6 @@ export const POST = async ({ request, locals: { supabase, getSession } }) => {
   
   let { concepts, deckId, sentenceId } = await request.json()
 
-  console.log({ concepts, deckId, sentenceId })
 
   const { data, error } = await saveConcepts(supabase, {
     concepts,

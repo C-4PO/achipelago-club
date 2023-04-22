@@ -44,8 +44,7 @@
   }
   
   .card-side {
-    background-color: #2889a5;
-    background-image: linear-gradient(180deg, #2889a5 0%, #2785a1 11%, #114b62 20%, #0a2132 30%, #121521 50%, #121523 100%);
+    background-color: #121523;
   }
 
 </style>

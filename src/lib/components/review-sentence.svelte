@@ -1,4 +1,5 @@
 <script>
+	import ErrorBoundary from 'svelte-error-boundary';
   import Word from './review-word.svelte'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
@@ -16,14 +17,14 @@
     isOriginal = _isOriginal
   }
 
-  $: console.log({ sentence })
-
   const clickWord = (word) => {
     dispatch('clickWord', word)
   }
 </script>
 
+
 <div class="rounded-3xl bg-white p-3 text-black">
+
   {#if title}
     <h3 class="text-sm font-bold text-center pb-1">{title}</h3>
   {/if}
@@ -36,6 +37,7 @@
       <button class:tab-active={!isOriginal} class="tab" on:click={() => toggleOriginal(false)} >Translated</button> 
     </div>
   {/if}
+
   {#if original && isOriginal}
     <p class="select-none">{original}</p>
   {:else}
@@ -55,3 +57,4 @@
     </p>
   {/if}
 </div>
+

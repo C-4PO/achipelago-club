@@ -51,6 +51,7 @@
 		"sdapi": "^0.2.3",
 		"supermemo": "^2.0.17",
 		"svelecte": "^3.15.3",
+		"svelte-error-boundary": "^1.0.2",
 		"sveltestrap": "^5.10.0",
 		"sveltik": "^0.1.16",
 		"xstate": "^4.37.1",

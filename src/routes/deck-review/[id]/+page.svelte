@@ -3,6 +3,7 @@
   import ReviewerCard from "$lib/components/reviewer-card.svelte";
   import ReviewCardConceptTranslate from "$lib/components/review-card-concept-translate.svelte";
   import Reviewer from '$lib/components/reviewer.svelte';
+  import cardBackground from '$lib/features/story-review/images/card-background.png';
   export let data
   import { reviewService } from '$lib/features/concept-review/services'
 
@@ -24,7 +25,17 @@
   let:slide={slide}
   let:index={index}
 > 
-  <ConceptTranslate card={slide} isFlipped={index === $context.currentCardIndex && !$step[states.intro]}/>
+  <ReviewerCard isFlipped={index === $context.currentCardIndex && !$step[states.intro]}>
+    <div slot="front" class="rounded-[50px] h-full w-full overflow-hidden bg-secondary">
+      <img src={cardBackground} alt="card background" class="w-full h-full object-cover"/>
+    </div>
+
+    <div slot="back" class="flex flex-col gap-5 h-full w-full rounded-[50px] bg-secondary">
+      {#if slide.id}
+        <ConceptTranslate card={slide} />
+      {/if}
+    </div>
+  </ReviewerCard>
 </Reviewer>
 
 <div class="fixed bottom-0 right-0 h-[300px] w-[300px]">

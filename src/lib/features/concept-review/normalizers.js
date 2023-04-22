@@ -11,14 +11,13 @@ export const normalizeDeck = ({ deckData }) => {
         display_words_indexes: displayConceptSentenceIndexes,
         display_translation_words_indexes: displayTranslationConceptWordsIndexes,
       } = Concepts.Concepts_Sentences[0]
-      console.log({ sentence })
       return {
         id: Concepts.id,
         type: Concepts.type,
         front:{
           concept: {
             type: `concept`,
-            sentence: Concepts.words.map((word, index) => {
+            words: Concepts.words.map((word, index) => {
               return {
                 word,
                 displayWord: displayConceptWords[index],
@@ -29,7 +28,7 @@ export const normalizeDeck = ({ deckData }) => {
           },
           sentence: {
             type: `sentence`,
-            sentence: sentence.words.map((word, index) => {
+            words: sentence.words.map((word, index) => {
               return {
                 word,
                 displayWord: sentence.display_words[index],
@@ -42,18 +41,34 @@ export const normalizeDeck = ({ deckData }) => {
           }
         },
         back: {
-          conceptWords: Concepts.translation_words,
-          sentenceWords: sentence.translation_words,
-          displayConceptWords: displayTranslationWords,
-          displayConceptSentenceIndexes: displayTranslationConceptWordsIndexes,
-          displaySentenceWords: sentence.translation_display_words,
-          paragraph: sentence.paragraph,
-          isExclaimation: sentence.is_exclamation,
-          isQuestion: sentence.is_question,
+          concept: {
+            type: `concept`,
+            words: Concepts.translation_words.map((word, index) => {
+              return {
+                word,
+                displayWord: displayTranslationWords[index],
+                index,
+                isTakenWord: true,
+              }
+            }),
+          },
+          sentence: {
+            type: `sentence`,
+            words: sentence.translation_words.map((word, index) => {
+              return {
+                word,
+                displayWord: sentence.translation_display_words[index],
+                index,
+                isTakenWord: displayTranslationConceptWordsIndexes.includes(index),
+              }
+            }),
+            isExclaimation: sentence.is_exclamation,
+            isQuestion: sentence.is_question,
+          },
         }
       }
     })
   }
-  console.log([ deck ])
+
   return deck
 }
