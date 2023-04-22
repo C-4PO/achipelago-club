@@ -13,6 +13,7 @@ export const saveConcepts = async (supabase, {
 export const saveConcept = async (supabase, {
   concept,
   deckId,
+  userId,
   sentenceId,
 }) => {
   const { data, error: conceptError } = await supabase.from('Concepts').insert([{
@@ -29,6 +30,7 @@ export const saveConcept = async (supabase, {
   const conceptId = data.id
 
   const { error: deckConceptError } = await supabase.from('Concepts_Decks').insert([{
+    user_id: userId,
     deck_id: deckId,
     concept_id: conceptId,
   }])
@@ -43,7 +45,6 @@ export const saveConcept = async (supabase, {
     return { error: deckConceptError }
   }
 
-  console.log({ sentenceId })
 
   const { error: deckSentenceError } = await supabase.from('Concepts_Sentences').insert([{
     sentence_id: sentenceId,

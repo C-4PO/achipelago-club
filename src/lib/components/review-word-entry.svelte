@@ -41,52 +41,6 @@
         {/if}
       </div>
     </div>
-    <!---
-    <div class="flex justify-center">
-      <div class="form-control">
-        <label for="type" class="label cursor-pointer flex-col">
-          <span class="label-text text-black">Noun</span> 
-          <Field type="radio" value="noun" name="type" class="radio checked:bg-blue-500"/>
-        </label>
-      </div>
-      <div class="form-control">
-        <label for="type"  class="label cursor-pointer flex-col">
-          <span class="label-text text-black">Verb</span> 
-          <Field type="radio" value="verb" name="type" class="radio checked:bg-blue-500"/>
-        </label>
-      </div>
-      <div class="form-control">
-        <label for="type"  class="label cursor-pointer flex-col">
-          <span class="label-text text-black">Phrase</span> 
-          <Field type="radio" value="phrase" name="type" class="radio checked:bg-blue-500"/>
-        </label>
-      </div>
-      <div class="form-control">
-        <label for="type" class="label cursor-pointer flex-col">
-          <span class="label-text text-black">Adj</span> 
-          <Field type="radio" value="adj" name="type" class="radio checked:bg-blue-500"/>
-        </label>
-      </div>
-      <div class="form-control">
-        <label for="type" class="label cursor-pointer flex-col">
-          <span class="label-text text-black">Advb</span> 
-          <Field type="radio" value="advb" name="type" class="radio checked:bg-blue-500"/>
-        </label>
-      </div>
-      <div class="form-control">
-        <label for="type" class="label cursor-pointer flex-col">
-          <span class="label-text text-black">Prep</span> 
-          <Field type="radio" value="prep" name="type" class="radio checked:bg-blue-500"/>
-        </label>
-      </div>
-      <div class="form-control">
-        <label for="type" class="label cursor-pointer flex-col">
-          <span class="label-text text-black">Intj</span> 
-          <Field type="radio" value="intj" name="type" class="radio checked:bg-blue-500"/>
-        </label>
-      </div>
-    </div>
-    -->
     <button type="submit" class="btn btn-sm btn-primary block mt-1 btn-block rounded-full" disabled={wordAdded || cantAdd}>
       {#if wordAdded}
         <Icon icon="mingcute:check-fill" class="inline-block" width="30" height="30" />

@@ -20,7 +20,6 @@
     translation: ''
   }
   const onSubmit = (values, { errors }) => {
-    console.log(values)
     dispatch('flip', values)
   }
 </script>

@@ -11,11 +11,7 @@ export const reviewService = ({
 
   const { state, send, service } = useMachine(flashCardMachine, {
     context: {
-      cards: cards.map(card => new Card({
-        front: card.front,
-        back: card.back,
-        id: card.id
-      })),
+      cards: cards.map(card => new Card(card)),
     }
   });
 

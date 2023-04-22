@@ -1,5 +1,5 @@
-import { getDeck } from '$lib/features/concept-review/features'
-import { normalizeDeck } from '$lib/features/concept-review/normalizers'
+import { getDeck, getDeckConcepts } from '$lib/features/concept-review/features'
+import { normalizeDeck, normalizeRelatedConceptsInDeck } from '$lib/features/concept-review/normalizers'
 import { redirect } from '@sveltejs/kit';
 
 export async function load({ params, parent }) {
@@ -17,8 +17,15 @@ export async function load({ params, parent }) {
     return { error }
   }
 
-  const deck = normalizeDeck({ deckData })
-  // const cards = normalizeSentenceCards({ concept: normalizedConcept })
+  let deck = normalizeDeck({ deckData })
+
+  const { data: relatedConceptData = {}, error: relatedConceptError } = await getDeckConcepts(supabase, {
+    deckId: params.id,
+    userId: user.id,
+    sentenceIds: deck.cards.map(card => card.sentenceId),
+  })
+
+  deck = normalizeRelatedConceptsInDeck({ deck, relatedConceptData })
   
   return { deck };
 }

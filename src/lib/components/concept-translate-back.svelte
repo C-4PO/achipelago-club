@@ -1,10 +1,10 @@
 <script>
-  import ErrorBoundary from 'svelte-error-boundary';
   import ReviewSentence from '$lib/components/review-sentence.svelte';
   import ReviewWordEntry from '$lib/components/review-word-entry.svelte'
-  import uniq from 'lodash/uniq'
+  import ReviewConceptCreator from '$lib/components/review-concept-creator.svelte'
 
   import { diffChars } from 'diff'
+  import union from 'lodash/union'
 	import { createEventDispatcher } from 'svelte';
   import { cleanSentence } from '$lib/features/story/utilities'
   import { getRemovedCharIndexes }  from '$lib/features/story-review/utilities'
@@ -14,10 +14,13 @@
   export let card
   export let errorIndexes
   export let response
-  export let takenWords = []
 
   let { front, back } = card
 
+  let conceptWordIndexes = front.concept.sentenceIndexes
+  let conceptTranslationIndexes = back.concept.sentenceIndexes
+
+  let takenWords = []
   let takenTranslations = []
   let selectedWords = []
   let selectedTranslations = []
@@ -27,8 +30,8 @@
 
   $: selectedWordIndexes = selectedWords.map(word => word.index).sort((a, b) => a - b)
   $: selectedTranslationsIndexes = selectedTranslations.map(word => word.index).sort((a, b) => a - b)
-  $: takenWordIndexes = takenWords.map(word => word.index).sort((a, b) => a - b)
-  $: takenTranslationIndexes = takenTranslations.map(word => word.index).sort((a, b) => a - b)
+  $: takenWordIndexes = union(takenWords.map(word => word.index), front.sentence.takenIndexes).sort((a, b) => a - b)
+  $: takenTranslationIndexes = union(takenTranslations.map(word => word.index), back.sentence.takenIndexes).sort((a, b) => a - b)
 
   const toggleWord = (word) => {
     if (selectedWords.find(w => w.index === word.index)) {
@@ -46,104 +49,64 @@
     }
   }
 
-  const replaceWords = (concepts) => {
-    takenWords = concepts.map(concept => concept.words.sort((a, b) => a.index - b.index)).flat()
-    takenTranslations = concepts.map(concept => concept.translationWords.sort((a, b) => a.index - b.index)).flat()
+  const resetSelection = (concepts) => {
+    takenWords = [...takenWords, ...selectedWords]
+    takenTranslations = [...takenTranslations, ...selectedTranslations]
     selectedWords = []
     selectedTranslations = []
   }
 
-  const onAddWord = () => {
-    wordAdded = true
-    setTimeout(() => {
-      wordAdded = false
-    }, 1000)
-  }
-
-  const onCantAdd = () => {
-    cantAdd = true
-    setTimeout(() => {
-      cantAdd = false
-    }, 1000)
-  }
-
-  const newConcept = (values) => {
-    let words = selectedWords
-    let tranlationWords = selectedTranslations
-    if (values.sentence) {
-      const cleanedInput = cleanSentence(values.sentence)
-      words = cleanedInput.split(' ').map(word => {
-        return {
-          word,
-        }
-      })
-    }
-    if (values.sentence) {
-      const cleanedInput = cleanSentence(values.translation)
-      tranlationWords = cleanedInput.split(' ').map(word => {
-        return {
-          word,
-        }
-      })
-    }
-
-   return {
-      words,
-      translationWords: tranlationWords,
-      type: values.type,
-    }
-  }
-
-  const createConcept = (values) => {
-    if (selectedWords.length === 0 && !values.sentence || selectedTranslations.length === 0  && !values.translation) {
-      onCantAdd()
-      return
-    }
-    const concept = newConcept(values)
+  const onCreateConcept = (concept) => {
     concepts = [...concepts, concept]
-    replaceWords(concepts)
-    onAddWord()
+    resetSelection()
   }
 
   const onFinish = () => {
     dispatch('review', {
-      input: response,
-      errorIndexes,
-      concepts,
-      sentenceId: card.sentenceId,
-      deckId: card.deckId
+      response,
+      newConcepts: concepts,
+      conceptId: card.conceptId,
+      sentenceId: card.back.sentence.id,
+      sentenceLength: card.back.sentence.words.length,
+      sentenceTranslationErrorIndexes: errorIndexes,
+      conceptTranslationIndexes,
     })
   }
 </script>
 
-<div class="flex flex-col h-full gap-5 px-[2px] overflow-auto rounded-3xl">
-  <ErrorBoundary name="custom try catch" handleError={(e) => console.log(e)}>
-  <ReviewSentence
-    sentence={card.front.sentence}
-    title="Prompt"
-    on:clickWord={(e) => toggleWord(e.detail)}
-    enableReview={true}
-    selectedIndexes={selectedWordIndexes}
-    takenWordIndexes={takenWordIndexes}
-  />
-
-  <ReviewSentence
-    sentence={card.back.sentence}
-    errorIndexes={errorIndexes}
-    original={response}
-    title="Result"
-    selectedIndexes={selectedTranslationsIndexes}
-    takenWordIndexes={takenTranslationIndexes}
-    on:clickWord={(e) => toggleTranslation(e.detail)}
-    enableReview={true}
-  />
-  <ReviewWordEntry
-    selectedWords={selectedWords}
-    selectedTranslations={selectedTranslations}
-    bind:wordAdded={wordAdded}
-    bind:cantAdd={cantAdd}
-    on:createConcept={(e) => createConcept(e.detail)}
-  />
-  </ErrorBoundary>
+<div class="flex flex-col h-full gap-5 px-[2px] rounded-3xl justify-between">
+  <div class="flex flex-col h-full gap-5 overflow-auto">
+    <ReviewSentence
+      sentence={card.front.sentence}
+      title="Prompt"
+      enableReview={true}
+      selectedIndexes={selectedWordIndexes}
+      takenWordIndexes={takenWordIndexes}
+      highlightedIndexes={conceptWordIndexes}
+      on:clickWord={(e) => toggleWord(e.detail)}
+    />
+    <ReviewSentence
+      sentence={card.back.sentence}
+      errorIndexes={errorIndexes}
+      original={response}
+      title="Result"
+      selectedIndexes={selectedTranslationsIndexes}
+      takenWordIndexes={takenTranslationIndexes}
+      highlightedIndexes={conceptTranslationIndexes}
+      enableReview={true}
+      on:clickWord={(e) => toggleTranslation(e.detail)}
+    />
+    <ReviewConceptCreator
+      selectedWords={selectedWords}
+      selectedTranslations={selectedTranslations}
+      sentenceId={card.back.sentence.id}
+      on:create={(e) => onCreateConcept(e.detail)}
+    />
+  </div>
+  <button
+    class="btn-full btn-secondary btn-md rounded-3xl "
+    on:click={onFinish}
+  >
+    Next
+  </button>
 </div>
-

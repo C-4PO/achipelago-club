@@ -1,4 +1,5 @@
 import { createMachine, assign, send } from 'xstate';
+import { evaluateConcept } from './api';
 import { getCardsToReview, tomorrow } from './utilities';
 import { v4 as uuidv4 } from 'uuid';
 export const transitions = {
@@ -14,7 +15,11 @@ export const states = {
   summary: 'summary',
 };
 
-const saveReviewToAPI = async (reviewItem) => {};
+const saveReviewToAPI = async ({ review }) => {
+  return evaluateConcept({
+    ...review
+  })
+};
 
 export const flashCardMachine = createMachine(
   {
@@ -41,17 +46,19 @@ export const flashCardMachine = createMachine(
         on: {
           [transitions.REVIEWED]: {
             target: states.loading,
-            actions: ['reviewCard', `incrementCard`],
           },
         },
       },
       [states.loading]: {
         invoke: {
-          src: (context, event) => saveReviewToAPI(event.review),
+          src: (context, event) => saveReviewToAPI(event),
           onDone: {
             actions: [
-              send(transitions.API_RESPONSE)
-            ],
+              send((context, event) => ({
+                type: transitions.API_RESPONSE,
+                review: event.data,
+              })),
+            ]
           },
         },
         on: {
@@ -59,9 +66,14 @@ export const flashCardMachine = createMachine(
             {
               target: states.summary,
               cond: 'allCardsScheduledPast3AM',
+              actions: ['reviewCard'],
             },
             {
               target: states.review,
+              actions: [
+                'reviewCard',
+                `incrementCard`,
+              ],
             },
           ],
         },
@@ -86,22 +98,20 @@ export const flashCardMachine = createMachine(
         const cards = context.cards; // get the current list of cards from context
         const scheduledCards = getCardsToReview(cards); // apply the algorithm
         const card = scheduledCards[0]; // get the next card to review
-        console.log(context.currentCardIndex)
-
         return {
           ...context,
           card,
           scheduledCards,
           reviewedCards: [
             ...context.reviewedCards.slice(0, context.currentCardIndex),
-            {...card, key: context.currentCardIndex + 1}
-            ,{key: context.currentCardIndex + 2}
+            {...card, key: context.currentCardIndex + 1},
+            {key: context.currentCardIndex + 2}
           ]
         }
       }),
       reviewCard: (context, event) => {
         const card = context.card;
-        card.addReview(event.review.rating);
+        card.addReview("good");
       },
       incrementCard: assign({
         currentCardIndex: (context) => context.currentCardIndex + 1,

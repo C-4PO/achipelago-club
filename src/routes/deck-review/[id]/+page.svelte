@@ -14,8 +14,12 @@
   })
 
   $: slides = $context.reviewedCards
-
   $: card = $context.card
+
+
+  const onReview = (review) => {
+    send(transitions.REVIEWED, { review })
+  }
 </script>
 
 <Reviewer
@@ -32,7 +36,7 @@
 
     <div slot="back" class="flex flex-col gap-5 h-full w-full rounded-[50px] bg-secondary">
       {#if slide.id}
-        <ConceptTranslate card={slide} />
+        <ConceptTranslate card={slide} on:review={e => onReview(e.detail)}/>
       {/if}
     </div>
   </ReviewerCard>

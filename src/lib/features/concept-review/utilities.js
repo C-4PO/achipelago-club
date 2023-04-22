@@ -5,10 +5,12 @@ export const tomorrow = () => dayjs().add(1, 'day');
 
 // Define a Card class to represent individual flashcards
 export class Card {
-  constructor({ id, front, back }) {
-    this.id = id
+  constructor({ id, front, back, conceptId, sentenceId }) {
+    this.id = conceptId,
     this.front = front; // front of the card
     this.back = back; // back of the card
+    this.conceptId = conceptId; // id of the concept
+    this.sentenceId = sentenceId; // id of the sentence
     this.interval = 1; // initial interval
     this.repetition = 0; // initial repetition
     this.efactor = 2.5; // initial ease factor

@@ -1,39 +1,48 @@
+import union from 'lodash/union'
+
 export const normalizeDeck = ({ deckData }) => {
   const deck = {
     id: deckData.Decks.id,
     title: deckData.Decks.title,
     isPersonal: deckData.Decks.is_personal,
-    cards: deckData.Decks.Concepts_Decks.map(({ Concepts }) => {
+    cards: deckData.Decks.Concepts_Decks.map(({ Concepts: concept }) => {
       const {
         Sentences: sentence,
         display_words: displayConceptWords,
         display_translation_words: displayTranslationWords,
         display_words_indexes: displayConceptSentenceIndexes,
         display_translation_words_indexes: displayTranslationConceptWordsIndexes,
-      } = Concepts.Concepts_Sentences[0]
+      } = concept.Concepts_Sentences[0]
+
       return {
-        id: Concepts.id,
-        type: Concepts.type,
+        id: concept.id,
+        cardType: `translation`,
+        conceptId: concept.id,
+        sentenceId: sentence.id,
+        deckId:deckData.Decks.id,
+        metaData: {
+          type: concept.type,
+        },
         front:{
           concept: {
             type: `concept`,
-            words: Concepts.words.map((word, index) => {
+            words: concept.words.map((word, index) => {
               return {
                 word,
                 displayWord: displayConceptWords[index],
                 index,
-                isTakenWord: true,
               }
             }),
+            sentenceIndexes: displayConceptSentenceIndexes,
           },
           sentence: {
+            id: sentence.id,
             type: `sentence`,
             words: sentence.words.map((word, index) => {
               return {
                 word,
                 displayWord: sentence.display_words[index],
                 index,
-                isTakenWord: displayConceptSentenceIndexes.includes(index),
               }
             }),
             isExclaimation: sentence.is_exclamation,
@@ -43,16 +52,17 @@ export const normalizeDeck = ({ deckData }) => {
         back: {
           concept: {
             type: `concept`,
-            words: Concepts.translation_words.map((word, index) => {
+            words: concept.translation_words.map((word, index) => {
               return {
                 word,
                 displayWord: displayTranslationWords[index],
                 index,
-                isTakenWord: true,
               }
             }),
+            sentenceIndexes: displayTranslationConceptWordsIndexes,
           },
           sentence: {
+            id: sentence.id,
             type: `sentence`,
             words: sentence.translation_words.map((word, index) => {
               return {
@@ -71,4 +81,42 @@ export const normalizeDeck = ({ deckData }) => {
   }
 
   return deck
+}
+
+export const normalizeRelatedConceptsInDeck = ({
+  deck,
+  relatedConceptData = [],
+}) => {
+  return {
+    ...deck,
+    cards: deck.cards.map((card) => {
+      return {
+        ...card,
+        front: {
+          ...card.front,
+          sentence: {
+            ...card.front.sentence,
+            takenIndexes: union(
+              relatedConceptData
+                .filter(concept => concept.sentence_id === card.front.sentence.id)
+                .map(({ display_words_indexes }) => display_words_indexes)
+                .flat()
+            )
+          },
+        },
+        back: {
+          ...card.back,
+          sentence: {
+            ...card.back.sentence,
+            takenIndexes: union(
+              relatedConceptData
+                .filter(concept => concept.sentence_id === card.back.sentence.id)
+                .map(({ display_translation_words_indexes }) => display_translation_words_indexes)
+                .flat()
+            )
+          }
+        }
+      }
+    }),
+  }
 }

@@ -16,8 +16,6 @@
   const onReview = (review) => {
     dispatch('review', review);
   }
-
-  $: console.log('isSHow', isShow && isFocused && !isReviewed)
   
 </script>
 

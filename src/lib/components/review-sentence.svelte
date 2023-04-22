@@ -11,6 +11,7 @@
   export let enableReview = false
   export let selectedIndexes = []
   export let takenWordIndexes = []
+  export let highlightedIndexes = []
 
   let isOriginal = false
   const toggleOriginal = (_isOriginal) => {
@@ -24,7 +25,6 @@
 
 
 <div class="rounded-3xl bg-white p-3 text-black">
-
   {#if title}
     <h3 class="text-sm font-bold text-center pb-1">{title}</h3>
   {/if}
@@ -49,6 +49,7 @@
           errorIndexes={errorIndexes}
           selectedIndexes={selectedIndexes}
           takenWordIndexes={takenWordIndexes}
+          highlightedIndexes={highlightedIndexes}
           isLast={i < sentence.words.length - 1}
           enableReview={enableReview}
           on:clickWord={(e) => clickWord(e.detail)}
