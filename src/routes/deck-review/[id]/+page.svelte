@@ -1,4 +1,5 @@
 <script>
+  import { writable } from 'svelte/store'
   import ConceptTranslate from "$lib/components/concept-translate.svelte";
   import ReviewerCard from "$lib/components/reviewer-card.svelte";
   import ReviewCardConceptTranslate from "$lib/components/review-card-concept-translate.svelte";
@@ -9,14 +10,36 @@
 
   const cards = data.deck.cards
 
-  const { context, step, send, transitions, states, onReview } = reviewService({
-    cards,
+  console.log(data)
+
+  // const { context, step, send, transitions, states, onReview } = reviewService({
+  //   cards,
+  // })
+
+  $: slides = [] // $context.tableCards
+  $: card = [] //$context.card
+
+  let states = {}
+  let transitions = {}
+
+  let step = writable({})
+
+  let context = writable({
+    currentCardIndex: 0
   })
 
-  $: slides = $context.tableCards
-  $: card = $context.card
+  const send = (event) => {
+    console.log(event)
+    
+  }
+
+  const onReview = (event) => {
+    console.log(event)
+  }
 
 </script>
+
+<h1>Review</h1>
 
 <Reviewer
   bind:cardIndex={$context.currentCardIndex}

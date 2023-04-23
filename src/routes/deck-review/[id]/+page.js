@@ -40,6 +40,5 @@ export async function load({ params, parent }) {
 
   deck = normalizeReviewInDeck({ deck, reviewData })
 
-  
   return { deck };
 }

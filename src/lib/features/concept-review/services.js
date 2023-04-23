@@ -1,11 +1,11 @@
 import { useMachine } from '$lib/features/utilities.js';
 import { stateIndex } from '$lib/features/utilities.js';
-import { derived } from 'svelte/store'
+import { derived, writable } from 'svelte/store'
 import { Card,  } from './utilities'
 // import { tomorrow } from './utilities';
 // import { evaluateConcept } from './api';
 
-import { flashCardMachine, transitions, states } from './machines';
+// import { flashCardMachine, transitions, states } from './machines';
 
 export const reviewService = ({
   cards = [],
@@ -27,18 +27,28 @@ export const reviewService = ({
   //     .filter(card => card.dueDate.isBefore(tomorrow()));
   // }
 
-  const { state, send, service } = useMachine(flashCardMachine, {
+  // const { state, send, service } = useMachine(flashCardMachine, {
+  //   context: {
+  //     cards: cards.map(card => new Card(card)),
+  //     // cardFinishCallback: saveReviewToAPI,
+  //     // getDrawPileCallack: getCardsToReview,
+  //   }
+  // });
+
+  const state = writable({
+    value: 'intro',
     context: {
-      cards: cards.map(card => new Card(card)),
-      // cardFinishCallback: saveReviewToAPI,
-      // getDrawPileCallack: getCardsToReview,
+      tabelCards: [],
+      card: {},
     }
-  });
+  })
 
   const step = derived(
     state,
     $state => stateIndex($state.value)
   );
+
+  const send = () => {}
 
   const context = derived(
     state,
@@ -50,7 +60,7 @@ export const reviewService = ({
     console.log(review)
 
 
-    send(transitions.REVIEWED, { review });
+    // send(transitions.REVIEWED, { review });
   }
 
   return {
@@ -60,7 +70,7 @@ export const reviewService = ({
     step,
     context,
     send,
-    service,
+    service: {},
   };
 }
 
