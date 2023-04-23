@@ -5,8 +5,9 @@ export const tomorrow = () => dayjs().add(1, 'day');
 
 // Define a Card class to represent individual flashcards
 export class Card {
-  constructor({ id, front, back, conceptId, sentenceId }) {
+  constructor({ id, front, back, conceptId, sentenceId, deckId, }) {
     this.id = conceptId,
+    this.deckId = deckId,
     this.front = front; // front of the card
     this.back = back; // back of the card
     this.conceptId = conceptId; // id of the concept
@@ -34,8 +35,26 @@ export class Card {
   }
 }
 
+export function reviewTranslationCards({ card, review }) {
+  console.log({ cards, review })
+
+}
+
+export function applyReviewToCard({ card, value }) {
+  const { interval, repetition, efactor} = supermemo(this, ratingValue);
+  const _review = {
+    interval,
+    repetition,
+    efactor,
+    dueDate
+  }
+  card._review;
+  card.dueDate = dayjs(Date.now()).add(interval, 'hour')
+}
+
 export function getCardsToReview(cards) {
   return cards
     .sort((a, b) => a.dueDate.isBefore(b.dueDate))
     .filter(card => card.dueDate.isBefore(tomorrow()));
 }
+

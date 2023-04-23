@@ -1,7 +1,5 @@
 import { createMachine, assign, send } from 'xstate';
-import { evaluateConcept } from './api';
 import { getCardsToReview, tomorrow } from './utilities';
-import { v4 as uuidv4 } from 'uuid';
 export const transitions = {
   START: 'START',
   REVIEWED: 'NEXT_CARD',
@@ -15,24 +13,29 @@ export const states = {
   summary: 'summary',
 };
 
-const saveReviewToAPI = async (review) => {
-  console.log(review)
-  return evaluateConcept({
-    ...review
-  })
-};
-
 export const flashCardMachine = createMachine(
   {
     id: 'flashcard',
+    predictableActionArguments: true,
     initial: states.intro,
     context: {
+      // Functions
+      cardFinishCallback: ({ context, event }) => {
+        debugger
+        return Promise.resolve({ context, event })
+      },
+      getDrawPileCallack: ({ context, event }) => ({ context, event }) => {
+        debugger
+        const { cards, currentCardIndex } = context
+        return cards.slice(currentCardIndex)
+      }, 
+      // State
       enableShuffle: true,
       currentCardIndex: 0,
       cards: [], // modified by the spaced repetition algorithm
       card: null,
-      reviewedCards: [{key: 1}, { key: 2}],
-      scheduledCards: [], // the list of cards sorted by the spaced repetition algorithm
+      tableCards: [{key: 1}, { key: 2}],
+      drawPile: [], // the list of cards sorted by the spaced repetition algorithm
     },
     states: {
       [states.intro]: {
@@ -43,7 +46,7 @@ export const flashCardMachine = createMachine(
         },
       },
       [states.review]: {
-        entry: ['computeCards', 'updateCards'], // modified to include updateCards action
+        entry: ['dealCards', 'updateCards'], // modified to include updateCards action
         on: {
           [transitions.REVIEWED]: {
             target: states.loading,
@@ -52,12 +55,14 @@ export const flashCardMachine = createMachine(
       },
       [states.loading]: {
         invoke: {
-          src: (context, event) => saveReviewToAPI(event.review),
+          src: (context, event) => {
+            return Promise.resolve({})
+          },
           onDone: {
             actions: [
               send((context, event) => ({
                 type: transitions.API_RESPONSE,
-                review: event.data,
+                ...event,
               })),
             ]
           },
@@ -88,29 +93,30 @@ export const flashCardMachine = createMachine(
   {
     actions: {
       finishReview: assign({
-        reviewedCards: (context) => {
+        tableCards: (context) => {
           return [
-            ...context.reviewedCards.slice(0, context.currentCardIndex),
+            ...context.tableCards.slice(0, context.currentCardIndex),
             { key: context.currentCardIndex + 1, summary: true, message: 'You have finished reviewing all your cards for today.' },
           ]
         }
       }),
-      computeCards: assign((context) => {
+      dealCards: assign((context, event) => {
         const cards = context.cards; // get the current list of cards from context
-        const scheduledCards = getCardsToReview(cards); // apply the algorithm
-        const card = scheduledCards[0]; // get the next card to review
+        const drawPile = context.getDrawPileCallack({ context, event }); // apply the algorithm
+        const card = drawPile[0]; // get the next card to review
         return {
           ...context,
           card,
-          scheduledCards,
-          reviewedCards: [
-            ...context.reviewedCards.slice(0, context.currentCardIndex),
-            {...card, key: context.currentCardIndex + 1},{key: context.currentCardIndex + 2}
+          drawPile,
+          tableCards: [
+            ...context.tableCards.slice(0, context.currentCardIndex),
+            {...card, key: context.currentCardIndex + 1},
+            {key: context.currentCardIndex + 2}
           ]
         }
       }),
       reviewCard: (context, event) => {
-        console.log(event)
+        console.log({ event })
         const card = context.card;
         card.addReview("good");
       },
@@ -119,11 +125,12 @@ export const flashCardMachine = createMachine(
       }),
       updateCards: assign({ // update the context.cards array with the sorted list
         cards: (context) => {
-          const scheduledCards = context.scheduledCards;
+          debugger
+          const drawPile = context.drawPile;
           if (!context.enableShuffle) {
-            return scheduledCards
+            return drawPile
           }
-          return scheduledCards.slice(1).concat(scheduledCards[0]);
+          return drawPile.slice(1).concat(drawPile[0]);
         },
       }),
     },

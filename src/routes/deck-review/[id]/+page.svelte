@@ -9,17 +9,13 @@
 
   const cards = data.deck.cards
 
-  const { context, step, send, transitions, states } = reviewService({
+  const { context, step, send, transitions, states, onReview } = reviewService({
     cards,
   })
 
-  $: slides = $context.reviewedCards
+  $: slides = $context.tableCards
   $: card = $context.card
 
-
-  const onReview = (review) => {
-    send(transitions.REVIEWED, { review })
-  }
 </script>
 
 <Reviewer
@@ -31,6 +27,11 @@
 > 
   <ReviewerCard isFlipped={index === $context.currentCardIndex && !$step[states.intro]}>
     <div slot="front" class="rounded-[50px] h-full w-full overflow-hidden bg-secondary">
+      {#if $step[states.intro]}
+        <div class="absolute top-[50%] left-[50%]" style="transform: translate(-50%, -50%);">
+          <button class="btn btn-primary btn-wide" on:click={() => send(transitions.START)}>Next</button>
+        </div>
+      {/if}
       <img src={cardBackground} alt="card background" class="w-full h-full object-cover"/>
     </div>
 
@@ -42,16 +43,5 @@
   </ReviewerCard>
 </Reviewer>
 
-<div class="fixed bottom-0 right-0 h-[300px] w-[300px]">
-<button class="btn btn-primary btn-wide" on:click={() => send(transitions.START)}>Next</button>
-<button class="btn btn-primary btn-wide" on:click={() => send(transitions.REVIEWED, { review: {
-  rating: "wrong",
-  cardId: $context.card.id,
-} })}>Wrong</button>
-<button class="btn btn-primary btn-wide" on:click={() => send(transitions.REVIEWED, { review: {
-  rating: "right",
-  cardId: $context.card.id,
-} })}>easy</button>
-</div>
 
 

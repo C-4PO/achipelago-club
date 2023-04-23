@@ -63,10 +63,11 @@
 
   const onFinish = () => {
     dispatch('review', {
+      card,
       response,
       newConcepts: concepts,
+      deckId: card.deckId,
       conceptId: card.conceptId,
-      sentenceId: card.back.sentence.id,
       sentenceLength: card.back.sentence.words.length,
       sentenceTranslationErrorIndexes: errorIndexes,
       conceptTranslationIndexes,

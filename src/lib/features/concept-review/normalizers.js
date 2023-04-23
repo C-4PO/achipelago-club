@@ -120,3 +120,31 @@ export const normalizeRelatedConceptsInDeck = ({
     }),
   }
 }
+
+export const normalizeReviewInDeck = ({ deck, reviewData = [] }) => {
+  const dueDateData = reviewData.map(({
+    Concepts: concept,
+  }) => {
+    return {
+      concept_id: concept.id,
+      due_date: concept.Concepts_Reviews[0].due_date,
+      _review: concept.Concepts_Reviews[0],
+    }
+  })
+
+  return {
+    ...deck,
+    cards: deck.cards.map((card) => {
+      const {
+        conceptId,
+        due_date,
+        ..._review
+      } = dueDateData.find(({ concept_id }) => concept_id === card.conceptId)
+      return {
+        ...card,
+        _review,
+        dueDate: due_date,
+      }
+    }),
+  }
+}
