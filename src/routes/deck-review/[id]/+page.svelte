@@ -10,37 +10,14 @@
 
   const cards = data.deck.cards
 
-  console.log(data)
-
-  // const { context, step, send, transitions, states, onReview } = reviewService({
-  //   cards,
-  // })
-
-  $: slides = [] // $context.tableCards
-  $: card = [] //$context.card
-
-  let states = {}
-  let transitions = {}
-
-  let step = writable({})
-
-  let context = writable({
-    currentCardIndex: 0
+  const { context, step, send, transitions, states, onReview } = reviewService({
+    cards,
   })
 
-  const send = (event) => {
-    console.log(event)
-    
-  }
-
-  const onReview = (event) => {
-    console.log(event)
-  }
+  $: slides = $context.tableCards
+  $: card = $context.card
 
 </script>
-
-<h1>Review</h1>
-
 <Reviewer
   bind:cardIndex={$context.currentCardIndex}
   bind:slides={slides}

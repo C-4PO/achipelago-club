@@ -1,54 +1,57 @@
 import { useMachine } from '$lib/features/utilities.js';
 import { stateIndex } from '$lib/features/utilities.js';
-import { derived, writable } from 'svelte/store'
+import { derived} from 'svelte/store'
 import { Card,  } from './utilities'
-// import { tomorrow } from './utilities';
-// import { evaluateConcept } from './api';
+import { tomorrow } from './utilities';
+import { evaluateConcept } from './api';
 
-// import { flashCardMachine, transitions, states } from './machines';
+import { flashCardMachine, transitions, states } from './machines';
 
 export const reviewService = ({
   cards = [],
 } = {}) => {
 
-  // const saveReviewToAPI = async ({ context, event: { review } }) => {
-  //   debugger
-  //   return evaluateConcept({
-  //     ...review
-  //   })
-  // };
+  const saveReviewToAPI = async ({ context, event: { review } }) => {
+    return evaluateConcept({
+      ...review
+    })
+  };
 
-  // function getCardsToReview({ context, event }) {
-  //   debugger
-  //   const { cards } = context;
+  function getCardsToReview({ context, event }) {
+    const { cards } = context;
 
-  //   return cards
-  //     .sort((a, b) => a.dueDate.isBefore(b.dueDate))
-  //     .filter(card => card.dueDate.isBefore(tomorrow()));
-  // }
+    return cards
+      .sort((a, b) => a.dueDate.isBefore(b.dueDate))
+      .filter(card => card.dueDate.isBefore(tomorrow()));
+  }
 
-  // const { state, send, service } = useMachine(flashCardMachine, {
-  //   context: {
-  //     cards: cards.map(card => new Card(card)),
-  //     // cardFinishCallback: saveReviewToAPI,
-  //     // getDrawPileCallack: getCardsToReview,
-  //   }
-  // });
-
-  const state = writable({
-    value: 'intro',
-    context: {
-      tabelCards: [],
-      card: {},
+  function shuffleDrawPile({ context, event }) {
+    const drawPile = context.drawPile;
+    if (!context.enableShuffle) {
+      return drawPile
     }
-  })
+    return drawPile.slice(1).concat(drawPile[0]);
+  }
+
+  function isFinished({ context, event }) {
+    const { cards } = context;
+    return cards.every(card => card.dueDate.isAfter(tomorrow()));
+  }
+
+  const { state, send, service } = useMachine(flashCardMachine, {
+    context: {
+      cards: cards.map(card => new Card(card)),
+      cardFinishCallback: saveReviewToAPI,
+      shuffleDrawPile,
+      fetchDrawPile: getCardsToReview,
+      isFinished,
+    },
+  });
 
   const step = derived(
     state,
     $state => stateIndex($state.value)
   );
-
-  const send = () => {}
 
   const context = derived(
     state,
@@ -56,11 +59,7 @@ export const reviewService = ({
   );
 
   const onReview = (review) => {
-
-    console.log(review)
-
-
-    // send(transitions.REVIEWED, { review });
+    send(transitions.REVIEWED, { review });
   }
 
   return {
@@ -70,7 +69,7 @@ export const reviewService = ({
     step,
     context,
     send,
-    service: {},
+    service,
   };
 }
 

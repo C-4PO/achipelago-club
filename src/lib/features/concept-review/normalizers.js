@@ -1,4 +1,5 @@
 import union from 'lodash/union'
+import dayjs from 'dayjs'
 
 export const normalizeDeck = ({ deckData }) => {
   const deck = {
@@ -122,29 +123,33 @@ export const normalizeRelatedConceptsInDeck = ({
 }
 
 export const normalizeReviewInDeck = ({ deck, reviewData = [] }) => {
-  const dueDateData = reviewData.map(({
-    Concepts: concept,
-  }) => {
-    return {
-      concept_id: concept.id,
-      due_date: concept.Concepts_Reviews[0].due_date,
-      _review: concept.Concepts_Reviews[0],
-    }
-  })
+  const reviewMap = reviewData.reduce((acc, review) => {
+    acc[review.Concepts.id] = review.Concepts.Concepts_Reviews[0]
+    return acc
+  }, {})
 
-  return {
+  deck = {
     ...deck,
     cards: deck.cards.map((card) => {
       const {
-        conceptId,
+        efactor,
+        interval,
+        last_reviewed,
+        repetition,
         due_date,
-        ..._review
-      } = dueDateData.find(({ concept_id }) => concept_id === card.conceptId)
+      } = reviewMap[card.conceptId]
       return {
         ...card,
-        _review,
-        dueDate: due_date,
+        review: {
+          efactor,
+          interval,
+          lastReviewed: dayjs(last_reviewed),
+          repetition,
+          dueDate: dayjs(due_date),
+        },
       }
     }),
   }
+
+  return deck
 }
