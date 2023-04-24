@@ -5,7 +5,7 @@ import {
   updatedCardReview,
   buildConceptCards,
 } from "$lib/features/concept-review/functions"
-import { normalizeConceptCards } from "$lib/features/concept-review/normalizers"
+import { normalizeConceptCards, normalizeReview } from "$lib/features/concept-review/normalizers"
 import { reviewCard } from "$lib/features/concept-review/utilities"
 
 export const POST = async ({ request, locals: { supabase, getSession } }) => {
@@ -58,11 +58,14 @@ export const POST = async ({ request, locals: { supabase, getSession } }) => {
       review: newReview
     })
 
+
+    const normalizedReview = normalizeReview({ review })
+
     if (updateError) {
       return new Response(JSON.stringify({ error: updateError, type: `updateError` }), { status: 500 })
     }
 
-    return new Response(JSON.stringify({ review, createdCards }), { status: 200 })
+    return new Response(JSON.stringify({ review: normalizedReview, createdCards }), { status: 200 })
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 })
   } 

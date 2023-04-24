@@ -37,6 +37,15 @@ export const reviewService = ({
     return cards.every(card => card.review.dueDate.isAfter(tomorrow()));
   }
 
+  function handleResponse({ context, event }) {
+    const { cards, currentCardIndex } = context;
+    const card = cards[currentCardIndex];
+    return {
+      ...context,
+      card,
+    };
+  }
+
   const { state, send, service } = useMachine(flashCardMachine, {
     context: {
       cards: cards,

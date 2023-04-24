@@ -1,4 +1,6 @@
 import { createMachine, assign, send } from 'xstate';
+import concat from 'lodash/concat';
+import { normalizeReviewClient, normalizeCardClient } from './normalizers';
 
 export const transitions = {
   START: 'START',
@@ -25,7 +27,6 @@ export const flashCardMachine = createMachine(
       isFinished: (context, event) => {
         return context.cards.length > context.currentCardIndex
       },
-      // Functions
       cardFinishCallback: ({ context, event }) => {
         return Promise.resolve({ context, event })
       },
@@ -40,6 +41,7 @@ export const flashCardMachine = createMachine(
       card: null,
       tableCards: [{key: 1}, { key: 2}],
       drawPile: [], // the list of cards sorted by the spaced repetition algorithm
+      lastCard : null,
     },
     states: {
       [states.intro]: {
@@ -93,11 +95,14 @@ export const flashCardMachine = createMachine(
         }
       }),
       drawCards: assign((context, event) => {
+        console.log(context.cards)
+        const lastCard = context.card
         const drawPile = context.fetchDrawPile({ context, event }); // apply the algorithm
         const card = drawPile[0]; // get the next card to review
         return {
           ...context,
           card,
+          lastCard,
           drawPile,
           tableCards: [
             ...context.tableCards.slice(0, context.currentCardIndex),
@@ -105,11 +110,17 @@ export const flashCardMachine = createMachine(
           ]
         }
       }),
-      reviewCard: (context, event) => {
-        debugger
-        console.log('reviewCard', context, event)
-      },
-      incrementCard: assign({
+      reviewCard: assign((context, event) => {
+        if (context.lastCard) {
+          context.lastCard.review = normalizeReviewClient({ review: event.data.review })
+        }
+
+        return {
+          ...context,
+          cards: concat(context.cards, normalizeCardClient({ createdCards: event.data.createdCards }))
+        }
+      }),
+      incrementCard: assign({ 
         currentCardIndex: (context) => {
           return context.currentCardIndex + 1
         }

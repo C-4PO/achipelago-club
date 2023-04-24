@@ -132,6 +132,51 @@ export const normalizeRelatedConceptsInConceptCards = ({
   })
 }
 
+export const normalizeReview = ({ review }) => {
+  const {
+    due_date: dueDate,
+    interval,
+    efactor,
+    last_reviewed: lastReviewed,
+    repetition,
+  } = review;
+
+  return {
+    dueDate: dayjs(dueDate),
+    interval,
+    efactor,
+    lastReviewed: dayjs(lastReviewed),
+    repetition
+  }
+}
+
+export const normalizeReviewClient = ({ review }) => {
+  const {
+    dueDate,
+    interval,
+    efactor,
+    lastReviewed,
+    repetition,
+  } = review;
+
+  return {
+    dueDate: dayjs(dueDate),
+    interval,
+    efactor,
+    lastReviewed: dayjs(lastReviewed),
+    repetition
+  }
+}
+
+export const normalizeCardClient = ({ createdCards = [] }) => {
+  return createdCards.map(card => {
+    return {
+      ...card,
+      review: normalizeReviewClient({ review: card.review })
+    }
+  })
+}
+
 export const normalizeReviewInConceptCards = ({ cards, reviewData = [] }) => {
   const reviewMap = reviewData.reduce((acc, review) => {
     acc[review.Concepts.id] = review.Concepts.Concepts_Reviews[0]
@@ -139,22 +184,10 @@ export const normalizeReviewInConceptCards = ({ cards, reviewData = [] }) => {
   }, {})
 
   cards = cards.map((card) => {
-    const {
-      efactor,
-      interval,
-      last_reviewed,
-      repetition,
-      due_date,
-    } = reviewMap[card.conceptId]
+    const review  = normalizeReview({ review: reviewMap[card.conceptId] })
     return {
       ...card,
-      review: {
-        efactor,
-        interval,
-        lastReviewed: dayjs(last_reviewed),
-        repetition,
-        dueDate: dayjs(due_date),
-      },
+      review,
     }
   })
 
