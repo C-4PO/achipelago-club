@@ -1,3 +1,8 @@
+import {
+  normalizeRelatedConceptsInConceptCards,
+  normalizeReviewInConceptCards
+} from '$lib/features/concept-review/normalizers'
+
 export function getDeck(supabase, { deckId, userId }) {
   return supabase
     .from('Users_Decks')
@@ -7,7 +12,7 @@ export function getDeck(supabase, { deckId, userId }) {
     .single()
 }
 
-export function getDeckConcepts(supabase, { userId, sentenceIds }) {
+export function getConceptsBySentenceIds(supabase, { userId, sentenceIds }) {
   return supabase
     .from('Concepts_Sentences')
     .select()
@@ -15,11 +20,44 @@ export function getDeckConcepts(supabase, { userId, sentenceIds }) {
     .in('sentence_id', sentenceIds)
 }
 
+export function getConceptsByIds(supabase, { conceptIds }) {
+  console.log({ conceptIds })
+  return supabase
+    .from('Concepts')
+    .select('*, Concepts_Sentences(*, Sentences(*)))')
+    .in('id', conceptIds)
+}
+
 export function getReviews(supabase, { deckId }) {
   return supabase
     .from('Concepts_Decks')
     .select('* , Concepts(*, Concepts_Reviews(*))')
     .eq('deck_id', deckId)
+}
+
+export async function buildConceptCards(supabase, { cards, deckId, userId }) {
+  const { data: relatedConceptData = {}, error: relatedConceptError } = await getConceptsBySentenceIds(supabase, {
+    userId: userId,
+    sentenceIds: cards.map(card => card.sentenceId),
+  })
+
+  if (relatedConceptError) {
+    console.error(relatedConceptError)
+    return { error: relatedConceptError, type: `relatedConceptError`}
+  }
+
+  cards = normalizeRelatedConceptsInConceptCards({ cards, relatedConceptData })
+
+  const { data: reviewData = {}, error: reviewError } = await getReviews(supabase, { deckId })
+
+  if (reviewError) {
+    console.error(reviewError)
+    return { error: reviewError }
+  }
+
+  cards = normalizeReviewInConceptCards({ cards, reviewData })
+
+  return { data: cards }
 }
 
 export async function addConcepts(supabase, { concepts, userId, deckId }) {
@@ -34,7 +72,7 @@ async function addConcept(supabase, { concept, userId, deckId }) {
     .contains('translation_words', concept.translation_words)
   
   if (existingConceptsError) {
-    return { error: existingConceptsError, type: 'query' };
+    return { error: existingConceptsError, type: `existingConceptsError`};
   }
 
   let conceptId;
@@ -53,7 +91,7 @@ async function addConcept(supabase, { concept, userId, deckId }) {
       }).select().limit(1).single();
 
     if (insertError) {
-      return { error: insertError, type: 'insert' };
+      return { error: insertError, type: 'insertError' };
     }
 
     console.log('Concept inserted:', newConcept)
@@ -73,7 +111,7 @@ async function addConcept(supabase, { concept, userId, deckId }) {
     .eq('concept_id', conceptId);
 
   if (existingRelationError) {
-    return { error: existingRelationError, type: 'concepts sentences' };
+    return { error: existingRelationError, type: 'existingRelationError' };
   }
 
   // If the relationship doesn't exist, insert it
@@ -115,6 +153,7 @@ async function addConcept(supabase, { concept, userId, deckId }) {
       .from('Concepts_Reviews')
       .insert({
         concept_id: conceptId,
+        user_id: userId,
       });
 
     if (insertConceptReviewError) {
@@ -127,41 +166,21 @@ async function addConcept(supabase, { concept, userId, deckId }) {
   return { data: { conceptId, isNewConcept } };
 }
 
-// export evaluateCard = async (supabase, { userId, cardId, review }) => {
+export const updatedCardReview = async (supabase, { userId, conceptId, review }) => {
+  const { data, error } = await supabase
+    .from('Concepts_Reviews')
+    .update({
+      ...review,
+    })
+    .select()
+    .eq('user_id', userId)
+    .eq('concept_id', conceptId)
+    .single();
 
+  if (error) {
+    return { error, type: 'updateCard.update' };
+  }
 
+  return { data };
 
-
-//   const { data: existingReview, error: existingReviewError } = await supabase
-//     .from('Reviews')
-//     .select()
-//     .eq('user_id', userId)
-//     .eq('card_id', cardId)
-//     .single();
-
-//   if (existingReviewError) {
-//     return { error: existingReviewError, type: 'query' };
-//   }
-
-//   // If the review doesn't exist, insert it
-//   if (existingReview === null) {
-//     const { data: newReview, error: insertError } = await supabase
-//       .from('Reviews')
-//       .insert({
-//         user_id: userId,
-//         card_id: cardId,
-//         review,
-//       });
-
-//     if (insertError) {
-//       return { error: insertError, type: 'insert' };
-//     }
-
-//     console.log('Review inserted:', newReview);
-//   } else {
-//     console.log('Review already exists:', existingReview);
-//   }
-
-//   return { data: { } };
-
-// }
+}

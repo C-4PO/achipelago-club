@@ -60,30 +60,20 @@ export const flashCardMachine = createMachine(
       [states.loading]: {
         invoke: {
           src: (context, event) => context.cardFinishCallback({ context, event }),
-          onDone: {
-            actions: [
-              send((context, event) => ({
-                type: transitions.API_RESPONSE,
-                review: event.data,
-              })),
-            ]
-          },
-        },
-        on: {
-          [transitions.API_RESPONSE]: [
+          onDone: [
             {
               target: states.summary,
               cond: 'isFinished',
-              actions: ['reviewCard'],
+              actions: ['reviewCard']
             },
             {
               target: states.review,
               actions: [
                 'reviewCard',
-                `incrementCard`,
-              ],
-            },
-          ],
+                'incrementCard'
+              ]
+            }
+          ]
         },
       },
       [states.summary]: {
@@ -116,12 +106,13 @@ export const flashCardMachine = createMachine(
         }
       }),
       reviewCard: (context, event) => {
-        console.log(event)
-        const card = context.card;
-        card.addReview("good");
+        debugger
+        console.log('reviewCard', context, event)
       },
       incrementCard: assign({
-        currentCardIndex: (context) => context.currentCardIndex + 1,
+        currentCardIndex: (context) => {
+          return context.currentCardIndex + 1
+        }
       }),
       shuffleCards: assign({ // update the context.cards array with the sorted list
         cards: (context, event) => {

@@ -3,58 +3,79 @@ import { supermemo } from 'supermemo';
 
 export const tomorrow = () => dayjs().add(1, 'day');
 
-// Define a Card class to represent individual flashcards
-export class Card {
-  constructor({ id, front, back, conceptId, sentenceId, deckId, }) {
-    this.id = conceptId,
-    this.deckId = deckId,
-    this.front = front; // front of the card
-    this.back = back; // back of the card
-    this.conceptId = conceptId; // id of the concept
-    this.sentenceId = sentenceId; // id of the sentence
-    this.interval = 1; // initial interval
-    this.repetition = 0; // initial repetition
-    this.efactor = 2.5; // initial ease factor
-    this.lastReviewed = new Date(); // date of last review
-    this.dueDate = dayjs(Date.now());
+function calculatePercentageConceptError({
+  errorIndexes,
+  sentenceIndexes
+}) {
+  let matches = 0;
+
+  for (const element of sentenceIndexes) {
+    if (errorIndexes.includes(element)) {
+      matches++;
+    }
   }
 
-  // Add a review to the card's history and update the card's next review date
-  addReview(rating) {
-    const ratingMap = {
-      wrong: 0,
-      right: 4,
-    };
-    const ratingValue = ratingMap[rating];
-    const { interval, repetition, efactor} = supermemo(this, ratingValue);
-    this.interval = interval;
-    this.repetition = repetition;
-    this.efactor = efactor;
-    this.dueDate = dayjs(Date.now()).add(interval, 'hour')
-    // console.log('Card:', this.id, 'due date:', 'interval', interval,  this.dueDate.format('YYYY-MM-DD HH:mm:ss'));
-  }
+  const percentage = 1 - (matches / sentenceIndexes.length);
+
+  return percentage;
+}
+
+function calculatePercentageSentenceError({
+  errorIndexes,
+  sentenceLength,
+  sentenceIndexes
+}) {
+  const sentenceLengthWithoutConcept = sentenceLength - sentenceIndexes.length;
+  const errorIndexesWithoutConcept = errorIndexes.filter((index) => !sentenceIndexes.includes(index));
+  const percentage = 1 - errorIndexesWithoutConcept.length / sentenceLengthWithoutConcept;
+  return percentage;
 }
 
 export function reviewTranslationCards({ card, review }) {
-  console.log({ cards, review })
 
+  const sentenceIndexes = card.front.concept.sentenceIndexes
+  const sentenceLength = card.back.sentence.words.length
+  const errorIndexes = review.errorIndexes
+
+  const percentageConceptError = calculatePercentageConceptError({
+    errorIndexes,
+    sentenceIndexes,
+  });
+
+  const percentageSentenceError = calculatePercentageSentenceError({
+    errorIndexes,
+    sentenceIndexes,
+    sentenceLength,
+  });
+
+  return Math.floor(((percentageConceptError * 3/5) + (percentageSentenceError * 2/5)) * 5)
 }
 
-export function applyReviewToCard({ card, value }) {
-  const { interval, repetition, efactor} = supermemo(this, ratingValue);
-  const _review = {
-    interval,
-    repetition,
-    efactor,
-    dueDate
+export function reviewCard({ card, review }) {
+  const reviewerMap = {
+    translation: reviewTranslationCards,
   }
-  card._review;
-  card.dueDate = dayjs(Date.now()).add(interval, 'hour')
+  const reviewer = reviewerMap[card.cardType];
+
+  if (reviewer) {
+    const ratingValue = reviewer({ card, review });
+    console.log('ratingValue', ratingValue)
+    const { interval, repetition, efactor } = supermemo(card.review, ratingValue);
+    
+    return {
+      interval,
+      repetition,
+      efactor,
+      due_date: dayjs(Date.now()).add(interval, 'hour'),
+      last_reviewed: new Date(),
+    }
+  }
+  return card.review
 }
 
 export function getCardsToReview(cards) {
   return cards
-    .sort((a, b) => a.dueDate.isBefore(b.dueDate))
-    .filter(card => card.dueDate.isBefore(tomorrow()));
+    .sort((a, b) => a.review.dueDate.isBefore(b.review.dueDate))
+    .filter(card => card.review.dueDate.isBefore(tomorrow()));
 }
 

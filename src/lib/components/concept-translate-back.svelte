@@ -15,6 +15,7 @@
   export let errorIndexes
   export let response
 
+  console.log(card)
   let { front, back } = card
 
   let conceptWordIndexes = front.concept.sentenceIndexes
@@ -68,9 +69,7 @@
       newConcepts: concepts,
       deckId: card.deckId,
       conceptId: card.conceptId,
-      sentenceLength: card.back.sentence.words.length,
-      sentenceTranslationErrorIndexes: errorIndexes,
-      conceptTranslationIndexes,
+      errorIndexes,
     })
   }
 </script>
@@ -103,6 +102,7 @@
       sentenceId={card.back.sentence.id}
       on:create={(e) => onCreateConcept(e.detail)}
     />
+    
   </div>
   <button
     class="btn-full btn-secondary btn-md rounded-3xl "

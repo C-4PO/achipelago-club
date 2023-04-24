@@ -14,6 +14,8 @@
     cards,
   })
 
+  console.log(cards)
+
   $: slides = $context.tableCards
   $: card = $context.card
 
@@ -37,7 +39,9 @@
 
     <div slot="back" class="flex flex-col gap-5 h-full w-full rounded-[50px] bg-secondary">
       {#if slide.id}
-        <ConceptTranslate card={slide} on:review={e => onReview(e.detail)}/>
+        <ConceptTranslate card={slide} on:review={e => {
+          onReview(e.detail)
+        }}/>
       {/if}
     </div>
   </ReviewerCard>

@@ -1,7 +1,6 @@
 import { useMachine } from '$lib/features/utilities.js';
 import { stateIndex } from '$lib/features/utilities.js';
 import { derived} from 'svelte/store'
-import { Card,  } from './utilities'
 import { tomorrow } from './utilities';
 import { evaluateConcept } from './api';
 
@@ -21,8 +20,8 @@ export const reviewService = ({
     const { cards } = context;
 
     return cards
-      .sort((a, b) => a.dueDate.isBefore(b.dueDate))
-      .filter(card => card.dueDate.isBefore(tomorrow()));
+      .sort((a, b) => a.review.dueDate.isBefore(b.review.dueDate))
+      .filter(card => card.review.dueDate.isBefore(tomorrow()));
   }
 
   function shuffleDrawPile({ context, event }) {
@@ -35,12 +34,12 @@ export const reviewService = ({
 
   function isFinished({ context, event }) {
     const { cards } = context;
-    return cards.every(card => card.dueDate.isAfter(tomorrow()));
+    return cards.every(card => card.review.dueDate.isAfter(tomorrow()));
   }
 
   const { state, send, service } = useMachine(flashCardMachine, {
     context: {
-      cards: cards.map(card => new Card(card)),
+      cards: cards,
       cardFinishCallback: saveReviewToAPI,
       shuffleDrawPile,
       fetchDrawPile: getCardsToReview,
