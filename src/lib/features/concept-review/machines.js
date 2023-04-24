@@ -1,6 +1,4 @@
 import { createMachine, assign, send } from 'xstate';
-import concat from 'lodash/concat';
-import { normalizeReviewClient, normalizeCardClient } from './normalizers';
 
 export const transitions = {
   START: 'START',
@@ -34,6 +32,9 @@ export const flashCardMachine = createMachine(
         const { cards, currentCardIndex } = context
         return cards.slice(currentCardIndex)
       }, 
+      handleResponse: ({ context, event }) => {
+        return context
+      },
       // Properties
       enableShuffle: true,
       currentCardIndex: 0,
@@ -46,9 +47,15 @@ export const flashCardMachine = createMachine(
     states: {
       [states.intro]: {
         on: {
-          [transitions.START]: {
-            target: states.review,
-          },
+          [transitions.START]: [
+            {
+              target: states.summary,
+              cond: 'isFinished',
+            },
+            {
+              target: states.review,
+            },
+          ]
         },
       },
       [states.review]: {
@@ -95,10 +102,10 @@ export const flashCardMachine = createMachine(
         }
       }),
       drawCards: assign((context, event) => {
-        console.log(context.cards)
         const lastCard = context.card
         const drawPile = context.fetchDrawPile({ context, event }); // apply the algorithm
         const card = drawPile[0]; // get the next card to review
+
         return {
           ...context,
           card,
@@ -111,14 +118,7 @@ export const flashCardMachine = createMachine(
         }
       }),
       reviewCard: assign((context, event) => {
-        if (context.lastCard) {
-          context.lastCard.review = normalizeReviewClient({ review: event.data.review })
-        }
-
-        return {
-          ...context,
-          cards: concat(context.cards, normalizeCardClient({ createdCards: event.data.createdCards }))
-        }
+        return context.handleResponse({ context, event })
       }),
       incrementCard: assign({ 
         currentCardIndex: (context) => {

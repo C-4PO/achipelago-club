@@ -10,6 +10,8 @@
 
   export let data
 
+  console.log(JSON.stringify(data.cards[0], null, 2))
+
   const {
     cards,
     context,
@@ -24,7 +26,7 @@
   const next = () => storyReviewService.send('NEXT')
 </script>
 
-<div class="h-full p-3 flex flex-col gap-3">
+<!-- <div class="h-full p-3 flex flex-col gap-3">
   <div class="h-full flex justify-center overflow-hidden items-center relative rounded-lg">
     <ReviewCarousel
       context={context}
@@ -38,4 +40,4 @@
       </div>
     {/if}
   </div>
-</div>
+</div> -->

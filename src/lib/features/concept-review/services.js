@@ -1,5 +1,6 @@
 import { useMachine } from '$lib/features/utilities.js';
 import { stateIndex } from '$lib/features/utilities.js';
+import { normalizeReviewClient, normalizeCardClient } from './normalizers';
 import { derived} from 'svelte/store'
 import { tomorrow } from './utilities';
 import { evaluateConcept } from './api';
@@ -16,12 +17,15 @@ export const reviewService = ({
     })
   };
 
-  function getCardsToReview({ context, event }) {
+  function getCardsToReview({ context }) {
     const { cards } = context;
 
-    return cards
-      .sort((a, b) => a.review.dueDate.isBefore(b.review.dueDate))
-      .filter(card => card.review.dueDate.isBefore(tomorrow()));
+    const result = cards
+    .sort((a, b) => a.review.dueDate.isBefore(b.review.dueDate))
+    .filter(card => card.review.dueDate.isBefore(tomorrow()))
+    console.log(result)
+
+    return result
   }
 
   function shuffleDrawPile({ context, event }) {
@@ -38,19 +42,25 @@ export const reviewService = ({
   }
 
   function handleResponse({ context, event }) {
-    const { cards, currentCardIndex } = context;
-    const card = cards[currentCardIndex];
+    if (context.lastCard) {
+      context.lastCard.review = normalizeReviewClient({ review: event.data.review })
+    }
+
     return {
       ...context,
-      card,
-    };
+      cards: concat(context.cards, normalizeCardClient({ createdCards: event.data.createdCards }))
+    }
   }
+
+  const initialCards = getCardsToReview({ context: { cards } });
 
   const { state, send, service } = useMachine(flashCardMachine, {
     context: {
-      cards: cards,
+      cards: initialCards,
+      ...{ tableCards : !initialCards.length ? [] : undefined },
       cardFinishCallback: saveReviewToAPI,
       shuffleDrawPile,
+      handleResponse,
       fetchDrawPile: getCardsToReview,
       isFinished,
     },

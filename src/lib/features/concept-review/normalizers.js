@@ -10,8 +10,6 @@ export const normalizeCard = ({ concept, deckId, relatedSentence }) => {
     display_translation_words_indexes: displayTranslationConceptWordsIndexes,
   } = relatedSentence
 
-  console.log(`ges here`)
-
   return {
     id: concept.id,
     cardType: `translation`,
@@ -78,9 +76,7 @@ export const normalizeCard = ({ concept, deckId, relatedSentence }) => {
 }
 
 export const normalizeConceptCards = ({ cards, deckId }) => {
-  console.log({ cards })
   return cards.map((card) => {
-    console.log( `in here`)
     return normalizeCard({ concept: card, deckId, relatedSentence: card.Concepts_Sentences[0] })
   })
 }

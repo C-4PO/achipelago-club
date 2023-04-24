@@ -31,8 +31,6 @@ export async function load({ params, parent }) {
     userId: user.id
   })
 
-  console.log('cards', cards)
-
   deck.cards = cards
   return { deck };
 }

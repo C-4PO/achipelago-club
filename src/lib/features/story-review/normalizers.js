@@ -31,8 +31,12 @@ export const normalizeSentenceCards = ({ story }) => {
           type: `writeSentence`,
           deckId: story.deckId,
           sentenceId: sentence.id,
-          front: normalizeFront(sentence),
-          back: normalizeBack(sentence),
+          front: {
+            sentence: normalizeFront(sentence),
+          },
+          back: {
+            sentence: normalizeBack(sentence),
+          },
           grade: null,
         }
       }),

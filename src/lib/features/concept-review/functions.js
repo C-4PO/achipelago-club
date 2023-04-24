@@ -21,7 +21,6 @@ export function getConceptsBySentenceIds(supabase, { userId, sentenceIds }) {
 }
 
 export function getConceptsByIds(supabase, { conceptIds }) {
-  console.log({ conceptIds })
   return supabase
     .from('Concepts')
     .select('*, Concepts_Sentences(*, Sentences(*)))')
