@@ -2,6 +2,8 @@
   import Reviewer from '$lib/components/reviewer.svelte';
   export let data;
 
+  console.log(data)
+
   const stories = data.stories || [];
 </script>
 

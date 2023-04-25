@@ -30,20 +30,18 @@
   }
 </script>
 
-<ErrorBoundary name="custom try catch" handleError={(e) => console.log(e)}>
-  <div class="flex flex-col w-full h-full overflow-hidden">
-    <ReviewerCard isFlipped={isFlipped}>
-      <div slot="front" class="h-full bg-secondary rounded-[50px] p-5">
-        <ConceptTranslateFront front={card.front} on:flip={(e) => onFlip(e.detail)} />
-      </div>
-      <div slot="back" class="h-full bg-primary rounded-[50px] p-5">
-        <ConceptTranslateBack
-          card={card}
-          response={response}
-          errorIndexes={errorIndexes}
-          on:review={(e) => onReview(e.detail)}
-        />
-      <div/>
-    </ReviewerCard>
-  </div>
-</ErrorBoundary>
+<div class="flex flex-col w-full h-full overflow-hidden">
+  <ReviewerCard isFlipped={isFlipped}>
+    <div slot="front" class="h-full bg-secondary rounded-[50px] p-5">
+      <ConceptTranslateFront front={card.front} on:flip={(e) => onFlip(e.detail)} />
+    </div>
+    <div slot="back" class="h-full bg-primary rounded-[50px] p-5">
+      <ConceptTranslateBack
+        card={card}
+        response={response}
+        errorIndexes={errorIndexes}
+        on:review={(e) => onReview(e.detail)}
+      />
+    <div/>
+  </ReviewerCard>
+</div>

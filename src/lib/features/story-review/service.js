@@ -1,4 +1,4 @@
-import { flashCardMachine } from './machines';
+import { states, transitions, flashCardMachine } from './machines';
 import { derived } from 'svelte/store'
 import { stateIndex } from '$lib/features/utilities.js';
 import { useMachine } from '$lib/features/utilities.js';
@@ -32,5 +32,7 @@ export const reviewService = (initialState) => {
     cards,
     send,
     service,
+    states,
+    transitions,
   };
 }

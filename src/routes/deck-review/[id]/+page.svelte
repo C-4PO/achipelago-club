@@ -10,13 +10,9 @@
 
   const cards = data.deck.cards
 
-  console.log(JSON.stringify(cards, null, 2))
-
   const { context, step, send, transitions, states, onReview } = reviewService({
     cards,
   })
-
-  $: console.log(cards)
 
   $: slides = $context.tableCards
   $: card = $context.card

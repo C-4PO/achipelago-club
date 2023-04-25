@@ -18,7 +18,6 @@
 
   let { front, back } = card
 
-  $: console.log({ card: card })
 
   let input = ''
   // let errorIndexes = []

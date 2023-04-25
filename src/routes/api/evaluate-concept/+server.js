@@ -21,7 +21,7 @@ export const POST = async ({ request, locals: { supabase, getSession } }) => {
     })
 
     if (conceptResponses.some(({ error }) => error)) {
-      return new Response(JSON.stringify({ error: 'Error adding concepts' }), { status: 500 })
+      return new Response(JSON.stringify({ errors: conceptResponses }), { status: 500 })
     }
     
     let createdCards = []

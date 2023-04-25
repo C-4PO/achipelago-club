@@ -15,11 +15,10 @@
   export let errorIndexes
   export let response
 
-  console.log(card)
   let { front, back } = card
 
-  let conceptWordIndexes = front.concept.sentenceIndexes
-  let conceptTranslationIndexes = back.concept.sentenceIndexes
+  let conceptWordIndexes = front.concept ? front.concept.sentenceIndexes : []
+  let conceptTranslationIndexes = back.concept ? back.concept.sentenceIndexes : []
 
   let takenWords = []
   let takenTranslations = []

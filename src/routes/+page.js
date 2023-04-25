@@ -4,7 +4,7 @@ import { redirect } from '@sveltejs/kit';
 export const prerender = true;
 
 export const load = async ({ parent }) => {
-  const { session } = await parent();
+  const { session, ...rest } = await parent();
   
   if (session) {
     throw redirect(303, '/story-list');

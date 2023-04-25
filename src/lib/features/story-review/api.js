@@ -1,16 +1,12 @@
 export async function saveConcepts({
-  concepts,
-  deckId,
+  ...reviewItem
 }) {
   return fetch('/api/concepts', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      concepts,
-      deckId,
-    })
+    body: JSON.stringify(reviewItem)
   }).then(async (response) => {
     if (response.ok) {
       const json = await response.json();

@@ -7,7 +7,7 @@
 
   const handleSaveWords = async (words) => {
     saveWordsPromise = saveWords(words).catch(e => {
-      debugger
+      console.log(e);
     });
   };
 </script>

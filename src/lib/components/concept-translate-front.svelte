@@ -32,12 +32,14 @@
   let:setFieldValue
 >
   <Form class="flex flex-col h-full gap-5 rounded-3xl px-[2px] overflow-auto">
-    <ReviewerSection title="Word">
-      <ReviewerSentence
-        sentence={{ words: front.concept.words }}
-        isCentered
-      />
-    </ReviewerSection>
+    {#if front.concept}
+      <ReviewerSection title="Word">
+        <ReviewerSentence
+          sentence={{ words: front.concept.words }}
+          isCentered
+        />
+      </ReviewerSection>
+    {/if}
     <ReviewerSection title="Context">
       <ReviewerSentence sentence={{ words: front.sentence.words }} title="Context"/> 
     </ReviewerSection>

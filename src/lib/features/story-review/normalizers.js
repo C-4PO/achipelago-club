@@ -1,36 +1,45 @@
 const normalizeFront = ({
   sentence,
   isExclamation,
-  isQuestion
+  isQuestion,
+  id: sentenceId, 
 }) => {
   return {
     words: sentence,
     isExclamation,
-    isQuestion
+    isQuestion,
+    sentenceId,
+    id: sentenceId,
   }
 }
 
 const normalizeBack = ({
   translation,
   isExclamation,
-  isQuestion
+  isQuestion,
+  id: sentenceId,
 }) => {
   return {
     words: translation,
     isExclamation,
-    isQuestion
+    isQuestion,
+    sentenceId,
+    id: sentenceId,
   }
 }
 
 export const normalizeSentenceCards = ({ story }) => {
-  return story.paragraphs.reduce((accum, paragraph) => {
+  return story.paragraphs.reduce((accum, paragraph, index) => {
     return [
       ...accum,
       ...paragraph.map((sentence) => {
         return {
-          type: `writeSentence`,
+          id: sentence.id,
+          type: `translation`,
           deckId: story.deckId,
           sentenceId: sentence.id,
+          key: sentence.id,
+          metaData: {},
           front: {
             sentence: normalizeFront(sentence),
           },

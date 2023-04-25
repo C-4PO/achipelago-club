@@ -16,9 +16,7 @@ export const states = {
 
 const saveReviewToAPI = async (reviewItem) => {
   return saveConcepts({
-    concepts: reviewItem.concepts,
-    deckId: reviewItem.deckId,
-    sentenceId: reviewItem.sentenceId,
+    ...reviewItem
   })
 };
 
@@ -51,13 +49,7 @@ export const flashCardMachine = createMachine(
       [states.loading]: {
         invoke: {
           src: (context, event) => saveReviewToAPI(event.review),
-          onDone: {
-            target: states.review,
-            actions: 'nextCard',
-          },
-        },
-        on: {
-          [transitions.API_RESPONSE]: [
+          onDone: [
             {
               target: states.summary,
               cond: 'lastCard',
@@ -65,8 +57,8 @@ export const flashCardMachine = createMachine(
             {
               target: states.review,
               actions: 'nextCard',
-            },
-          ],
+            }, 
+          ]
         },
       },
       [states.summary]: {

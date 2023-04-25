@@ -1,5 +1,4 @@
 export const serializeNewConcepts = (concepts) => {
-
   return concepts.map(concept => {
     return {
       words: concept.words.map(({ word }) => word),

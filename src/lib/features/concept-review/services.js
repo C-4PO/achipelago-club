@@ -4,13 +4,14 @@ import { normalizeReviewClient, normalizeCardClient } from './normalizers';
 import { derived} from 'svelte/store'
 import { tomorrow } from './utilities';
 import { evaluateConcept } from './api';
+import { concat } from 'lodash';
 
 import { flashCardMachine, transitions, states } from './machines';
 
 export const reviewService = ({
   cards = [],
 } = {}) => {
-
+ 
   const saveReviewToAPI = async ({ context, event: { review } }) => {
     return evaluateConcept({
       ...review
@@ -19,11 +20,9 @@ export const reviewService = ({
 
   function getCardsToReview({ context }) {
     const { cards } = context;
-
-    const result = cards
+    const result = (cards || [])
     .sort((a, b) => a.review.dueDate.isBefore(b.review.dueDate))
     .filter(card => card.review.dueDate.isBefore(tomorrow()))
-    console.log(result)
 
     return result
   }
@@ -51,13 +50,11 @@ export const reviewService = ({
       cards: concat(context.cards, normalizeCardClient({ createdCards: event.data.createdCards }))
     }
   }
-
-  const initialCards = getCardsToReview({ context: { cards } });
+  const initialCards = getCardsToReview({ context: { cards } }) || [];
 
   const { state, send, service } = useMachine(flashCardMachine, {
     context: {
       cards: initialCards,
-      ...{ tableCards : !initialCards.length ? [] : undefined },
       cardFinishCallback: saveReviewToAPI,
       shuffleDrawPile,
       handleResponse,
@@ -65,6 +62,7 @@ export const reviewService = ({
       isFinished,
     },
   });
+
 
   const step = derived(
     state,
