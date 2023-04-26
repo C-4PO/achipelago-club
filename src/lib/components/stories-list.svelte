@@ -9,6 +9,9 @@
   let flipOpen = false
   export let cardBackground = '';
   export let stories = [];
+  export let personalDeck;
+
+  console.log(personalDeck)
 
   const goToCreate = () => {
     dispatch('navigate', 'create')
@@ -32,7 +35,7 @@
           <h2 class="text-center text-primary text-4xl ml-4">Stories</h2>
         </div>
         <div class="basis-full flex justify-end items-center">
-          <button class="btn btn-secondary ml-3">Study</button>
+          <a class="btn btn-secondary ml-3" href="/deck-review/{personalDeck.id}">Study</a>
           <button class="btn btn-secondary ml-3" on:click={goToCreate}>Create</button>
         </div>
       </div>
@@ -43,7 +46,6 @@
               <h2 class="card-title">{story.title}</h2>
               <div class="card-actions justify-end">
                 <a href={`/story-review/${story.id}`} class="btn">Review</a>
-                <button class="btn">Edit</button>
               </div>
             </div>
           </li>

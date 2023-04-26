@@ -12,6 +12,10 @@
 
   const stories = data.stories || [];
 
+  const personalDeck = data.decks.find((deck) => deck.Decks.is_personal).Decks
+
+  console.log({ personalDeck })
+
   const slides = writable([{ key: 1, id: 1, type: 'Stories' }, { key: 2, id: 2, type: 'Create' }])
   const index = writable(0)
   const currentSlide = derived([slides, index], ([$slides, $index]) => {
@@ -31,7 +35,7 @@
   let:index={index}
 > 
   {#if slide.type === 'Stories'}
-    <StoriesList isFlipped={$currentSlide.key === slide.key} stories={stories} cardBackground={cardBackground} on:navigate={(e) => goToCreate(e.detail)} />
+    <StoriesList personalDeck={personalDeck} isFlipped={$currentSlide.key === slide.key} stories={stories} cardBackground={cardBackground} on:navigate={(e) => goToCreate(e.detail)} />
   {/if}
   {#if slide.type === 'Create'}
     <StoriesGenerate isFlipped={$currentSlide.key === slide.key} cardBackground={cardBackground} on:navigate={(e) => goToStories(e.detail)}/>

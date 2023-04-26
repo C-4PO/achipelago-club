@@ -12,7 +12,7 @@
 
   $: ({ supabase, session } = data);
 
-  $: isStoryReview = data.pathname.includes('story-review');
+  $: isReview = data.pathname.includes('story-review') || data.pathname.includes('deck-review');
 
   onMount(() => {
     const {
@@ -39,7 +39,7 @@
     <div class="flex">
       <a class="btn btn-ghost normal-case text-xl">Archipelago Club</a>
     </div>
-    {#if isStoryReview}
+    {#if isReview}
       <a href="/story-list" class="btn btn-secondary">Leave</a>
     {/if}
 	</header>

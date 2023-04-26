@@ -1,4 +1,5 @@
 <script>
+  import { onMount }  from 'svelte'
   import { createEventDispatcher } from 'svelte'
   import { Sveltik, Form, Field } from 'sveltik'
   import * as yup from 'yup'
@@ -9,6 +10,8 @@
   import { validate } from '$lib/components/utilities'
   
   export let front = {}
+
+  let form;
 
   const dispatch = createEventDispatcher();
 
@@ -22,16 +25,23 @@
   const onSubmit = (values, { errors }) => {
     dispatch('flip', values)
   }
+
+  onMount(() => {
+    console.log(form)
+  })
+
 </script>
 
 <Sveltik
+  bind:this={form}
   initialValues={initialValues}
   validate={validate(validationSchema)}
   onSubmit={onSubmit}
   let:errors
   let:setFieldValue
+  let:setSubmitting
 >
-  <Form class="flex flex-col h-full gap-5 rounded-3xl px-[2px] overflow-auto">
+  <Form id="form" class="flex flex-col h-full gap-5 rounded-3xl px-[2px] overflow-auto">
     {#if front.concept}
       <ReviewerSection title="Word">
         <ReviewerSentence
@@ -51,6 +61,11 @@
         class:input-error={meta.error}
         on:input={field.handleInput}
         on:blur={field.handleBlur}
+        on:keyup={(event) => {
+          if (event.key === 'Enter' && !meta.error) {
+            document.getElementById("form").requestSubmit();
+          }
+        }}
       /> 
     </Field>
     <button type="submit" class="btn btn-primary rounded-full">Next</button>
