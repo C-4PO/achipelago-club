@@ -76,7 +76,7 @@
 </script>
 
 <div class="flex flex-col h-full gap-5 px-[2px] rounded-3xl justify-between">
-  <div class="flex flex-col h-full gap-5 overflow-auto rounded-[50px]">
+  <div class="flex flex-col h-full gap-5 overflow-auto rounded-3xl">
     <header class="flex justify-center">
       {#if rating >= 4}
         <Icon icon="mingcute:check-fill" class="inline-block text-white text-lg" width="40" height="40" />

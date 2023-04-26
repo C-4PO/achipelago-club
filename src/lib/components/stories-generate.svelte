@@ -12,7 +12,9 @@
   export let isFlipped;
 
   const handleSaveWords = async (words) => {
-    saveWordsPromise = Promise.resolve({ id: 1 });
+    saveWordsPromise = saveWords(words).catch(e => {
+      console.log(e);
+    });
   };
 
   const handleNavigate = (location) => {
@@ -44,7 +46,7 @@
         {/await}
       </div>
       <div slot="front" class="h-full">
-        <StoryForm on:save={(event) => handleSaveWords(event.detail)} on:navigate={handleNavigate}/>
+          <StoryForm on:save={(event) => handleSaveWords(event.detail)} on:navigate={handleNavigate}/>
       </div>
     </ReviewerCard>  
 
