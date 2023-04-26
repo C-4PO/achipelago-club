@@ -2,10 +2,10 @@ import { createMachine, assign } from "xstate";
 import { signup, login } from "./api";
 
 const loginService = async (context, event) => {
-  return login(event)
+  return login(event);
 };
 const signupService = async (context, event) => {
-  return signup(event)
+  return signup(event);
 };
 
 export const transitions = {
@@ -22,7 +22,6 @@ export const states = {
     id: "login",
     form: "form",
     loading: "loading",
-    error: "error",
     success: "success",
   },
   signup: {
@@ -30,7 +29,6 @@ export const states = {
     form: "form",
     termsAndConditions: "termsAndConditions",
     loading: "loading",
-    error: "error",
     success: "success",
   },
 };
@@ -42,26 +40,31 @@ export const authMachine = createMachine(
     initial: states.chooseOption,
     context: {
       errorContext: null,
+      stageIndex: 1,
     },
     states: {
       [states.chooseOption]: {
+        entry: assign({ stageIndex: 0 }),
         on: {
           [transitions.LOGIN]: states.login.id,
           [transitions.SIGNUP]: states.signup.id,
         },
       },
       [states.login.id]: {
+        entry: assign({ stageIndex: 1 }),
         initial: states.login.form,
         states: {
           [states.login.form]: {
+            id: "login-form",
             on: {
-              [transitions.SIGNUP]: `../../${states.signup.id}/${states.signup.form}`,
+              [transitions.SIGNUP]: `#signup-form`,
               [transitions.SUBMIT]: {
                 target: states.login.loading,
               },
             },
           },
           [states.login.loading]: {
+            entry: assign({ stageIndex: 2 }),
             invoke: {
               src: loginService,
               onDone: {
@@ -69,16 +72,12 @@ export const authMachine = createMachine(
                 actions: assign({ user: (context, event) => event.data }),
               },
               onError: {
-                target: states.login.error,
+                target: states.login.form,
               },
             },
           },
-          [states.login.error]: {
-            on: {
-              [transitions.RETRY]: states.login.form,
-            },
-          },
           [states.login.success]: {
+            entry: assign({ stageIndex: 3 }),
             type: "final",
           },
         },
@@ -87,8 +86,10 @@ export const authMachine = createMachine(
         initial: states.signup.form,
         states: {
           [states.signup.form]: {
+            id: "signup-form",
+            entry: assign({ stageIndex: 4 }),
             on: {
-              [transitions.LOGIN]: `../../${states.login.id}/${states.login.form}`,
+              [transitions.LOGIN]: `#login-form`,
               [transitions.SUBMIT]: {
                 target: states.signup.loading,
               },
@@ -96,6 +97,7 @@ export const authMachine = createMachine(
             },
           },
           [states.signup.loading]: {
+            entry: assign({ stageIndex: 5 }),
             invoke: {
               src: signupService,
               onDone: {
@@ -103,19 +105,16 @@ export const authMachine = createMachine(
                 actions: assign({ user: (context, event) => event.data }),
               },
               onError: {
-                target: states.signup.error,
+                target: states.signup.form,
               },
             },
           },
-          [states.signup.error]: {
-            on: {
-              [transitions.RETRY]: states.signup.form,
-            },
-          },
           [states.signup.success]: {
+            entry: assign({ stageIndex: 6 }),
             type: "final",
           },
           [states.signup.termsAndConditions]: {
+            entry: assign({ stageIndex: 7 }),
             on: {
               [transitions.SIGNUP]: states.signup.form,
             },

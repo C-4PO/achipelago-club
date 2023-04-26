@@ -47,6 +47,11 @@
     dispatch('submit', values)
   }
 
+  const goToLogin = () => {
+    console.log('go to login')
+    dispatch('goToLogin')
+  }
+
   const goToTermsAndConditions = () => {
     console.log('go to terms and conditions')
   }
@@ -144,5 +149,5 @@
     </Field>
     <button class="btn btn-primary w-full max-w-xs" type="submit" >Sign Up</button>
   </Form>
-  <button class="mt-1 text-neutral underline" >Would you like to login instead?</button>
+  <button class="mt-1 text-neutral underline" on:click={goToLogin}>Would you like to login instead?</button>
 </Sveltik>

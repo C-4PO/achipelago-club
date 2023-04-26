@@ -3,13 +3,11 @@ import { redirect } from '@sveltejs/kit';
 import { getDecks } from '$lib/features/story/functions.js'
 
 export async function load({ parent }) {
-  console.log('before')
   const { supabase, session } = await parent()
-  console.log(session)
+
   if (!session) {
     throw redirect(303, '/');
   }
-  console.log({ userId: session.user.id })
   const { data: decks, error: deckError } = await getDecks(supabase, { userId: session.user.id })
 
   if (deckError) {
@@ -24,8 +22,6 @@ export async function load({ parent }) {
     console.log(`story error`)
     return { error }
   }
-
-  console.log('called')
 
   return { stories, decks };
 }

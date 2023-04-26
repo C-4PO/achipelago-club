@@ -11,7 +11,7 @@ export async function POST({ request, locals: { supabase } }) {
       return new Response(JSON.stringify({ error }), { status: 500 })
     }
     
-    return new Response(JSON.stringify({ data }), { status: 303, headers: { Location: '/story-list' } })  
+    return new Response(JSON.stringify({ data }), { status: 200  })  
   } catch (error) {
     return new Response(JSON.stringify({ message: error.message }), { status: 500 })  
   }

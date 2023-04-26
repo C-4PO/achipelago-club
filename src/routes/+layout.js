@@ -5,7 +5,7 @@ import {
 } from '$env/static/public';
 import { createSupabaseLoadClient } from '@supabase/auth-helpers-sveltekit';
 
-export const load = async ({ fetch, data, depends }) => {
+export const load = async ({ fetch, data, depends, url }) => {
   const supabase = createSupabaseLoadClient({
     supabaseUrl: PUBLIC_SUPABASE_URL,
     supabaseKey: PUBLIC_SUPABASE_KEY,
@@ -17,5 +17,5 @@ export const load = async ({ fetch, data, depends }) => {
     data: { session }
   } = await supabase.auth.getSession();
 
-  return { supabase, session };
+  return { supabase, session, pathname: url.pathname };
 };

@@ -32,6 +32,11 @@
     email: '',
   }
 
+  const goToSignin = () => {
+    dispatch('goToSignin')
+  }
+
+
   const onSubmit = (values, { errors }) => {
     dispatch('submit', values)
   }
@@ -83,5 +88,5 @@
     </Field>
     <button class="btn btn-primary w-full max-w-xs" type="submit" >Login</button>
   </Form>
-  <button class="mt-1 text-neutral underline" >Would you like to signup instead?</button>
+  <button class="mt-1 text-neutral underline" on:click={goToSignin}>Would you like to signup instead?</button>
 </Sveltik>

@@ -25,7 +25,6 @@
     transitions,
   } = reviewService({ cards: data.cards })
 
-  console.log('data', data)
 
   const onReview = (review) => {
     send('NEXT_CARD', { review })

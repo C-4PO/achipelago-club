@@ -33,22 +33,27 @@ function calculatePercentageSentenceError({
 
 export function reviewTranslationCards({ card, review }) {
 
-  const sentenceIndexes = card.front.concept.sentenceIndexes
+  const sentenceIndexes = card.front.concept?.sentenceIndexes || []
   const sentenceLength = card.back.sentence.words.length
   const errorIndexes = review.errorIndexes
 
-  const percentageConceptError = calculatePercentageConceptError({
-    errorIndexes,
-    sentenceIndexes,
-  });
-
   const percentageSentenceError = calculatePercentageSentenceError({
     errorIndexes,
-    sentenceIndexes,
+    sentenceIndexes: [],
     sentenceLength,
   });
 
-  return Math.floor(((percentageConceptError * 3/5) + (percentageSentenceError * 2/5)) * 5)
+  console.log('percentageSentenceError', percentageSentenceError)
+
+  if (sentenceIndexes.length) {
+    const percentageConceptError = calculatePercentageConceptError({
+      errorIndexes,
+      sentenceIndexes,
+    });
+    return Math.floor(((percentageConceptError * 3/5) + (percentageSentenceError * 2/5)) * 5)
+  }
+
+  return Math.floor(percentageSentenceError * 5)
 }
 
 export function reviewCard({ card, review }) {

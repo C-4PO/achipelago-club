@@ -1,36 +1,39 @@
 <script>
+  import { onMount } from 'svelte';
+  import StoriesList from '$lib/components/stories-list.svelte';
+  import StoriesGenerate from '$lib/components/stories-generate.svelte';
+  import { writable, derived } from "svelte/store";
+  import ConceptTranslate from "$lib/components/concept-translate.svelte";
+  import ReviewerCard from "$lib/components/reviewer-card.svelte";
+  import cardBackground from '$lib/features/story-review/images/card-background.png';
   import Reviewer from '$lib/components/reviewer.svelte';
   export let data;
 
-  console.log(data)
 
   const stories = data.stories || [];
+
+  const slides = writable([{ key: 1, id: 1, type: 'Stories' }, { key: 2, id: 2, type: 'Create' }])
+  const index = writable(0)
+  const currentSlide = derived([slides, index], ([$slides, $index]) => {
+    return $slides[$index]
+  })
+
+  const goToCreate = () => index.set(1)
+  const goToStories = () => index.set(0)
+
 </script>
 
-<section class="flex flex-col p-3">
-  <div class="flex justify-between w-full mb-3">
-    <div class="basis-full flex justif=starty">
-    </div>
-    <div class="grow-1 basis-auto flex-none flex items-center">
-      <h2 class="text-center">Stories</h2>
-    </div>
-    <div class="basis-full flex justify-end items-center">
-      <button class="btn btn-secondary ml-3">Study</button>
-      <a class="btn btn-secondary ml-3" href="/story-generate">Create</a>
-    </div>
-  </div>
-  <ul class="overflow-auto">
-    {#each stories as story}
-      <li class="card bg-primary text-primary-content w-full mb-3">
-        <div class="card-body flex">
-          <h2 class="card-title">{story.title}</h2>
-          <div class="card-actions justify-end">
-            <a href={`/story-review/${story.id}`} class="btn">Review</a>
-            <button class="btn">Edit</button>
-          </div>
-        </div>
-      </li>
-    {/each}
-  </ul>
-</section>
-
+<Reviewer
+  bind:cardIndex={$index}
+  bind:slides={$slides}
+  enableReview={false}
+  let:slide={slide}
+  let:index={index}
+> 
+  {#if slide.type === 'Stories'}
+    <StoriesList isFlipped={$currentSlide.key === slide.key} stories={stories} cardBackground={cardBackground} on:navigate={(e) => goToCreate(e.detail)} />
+  {/if}
+  {#if slide.type === 'Create'}
+    <StoriesGenerate isFlipped={$currentSlide.key === slide.key} cardBackground={cardBackground} on:navigate={(e) => goToStories(e.detail)}/>
+  {/if}
+</Reviewer>

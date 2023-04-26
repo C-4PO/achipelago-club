@@ -2,6 +2,7 @@
   import ReviewSentence from '$lib/components/review-sentence.svelte';
   import ReviewWordEntry from '$lib/components/review-word-entry.svelte'
   import ReviewConceptCreator from '$lib/components/review-concept-creator.svelte'
+  import Icon from '@iconify/svelte';
 
   import { diffChars } from 'diff'
   import union from 'lodash/union'
@@ -14,6 +15,7 @@
   export let card
   export let errorIndexes
   export let response
+  export let rating = 0
 
   let { front, back } = card
 
@@ -75,6 +77,15 @@
 
 <div class="flex flex-col h-full gap-5 px-[2px] rounded-3xl justify-between">
   <div class="flex flex-col h-full gap-5 overflow-auto">
+    <header class="flex justify-center">
+      {#if rating >= 4}
+        <Icon icon="mingcute:check-fill" class="inline-block text-white text-lg" width="40" height="40" />
+      {:else if rating >= 2}
+  `      <Icon icon="ph:smiley-meh-bold" class="inline-block text-white text-lg" width="40" height="40" />
+      {:else}
+        <Icon icon="mingcute:close-fill" class="inline-block text-white text-lg" width="40" height="40"/>
+      {/if}
+    </header>
     <ReviewSentence
       sentence={card.front.sentence}
       title="Prompt"
@@ -104,7 +115,7 @@
     
   </div>
   <button
-    class="btn-full btn-secondary btn-md rounded-3xl "
+    class="btn-full btn-primary btn-md rounded-3xl "
     on:click={onFinish}
   >
     Next
