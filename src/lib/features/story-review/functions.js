@@ -29,23 +29,6 @@ export const saveConcept = async (supabase, {
 
   const conceptId = data.id
 
-  const { error: deckConceptError } = await supabase.from('Concepts_Decks').insert([{
-    user_id: userId,
-    deck_id: deckId,
-    concept_id: conceptId,
-  }])
-
-  if (deckConceptError) {
-    console.error('Error saving deck_concept', deckConceptError)
-    return { error: deckConceptError }
-  }
-
-  if (deckConceptError) {
-    console.error('Error saving deck_concept', deckConceptError)
-    return { error: deckConceptError }
-  }
-
-
   const { error: deckSentenceError } = await supabase.from('Concepts_Sentences').insert([{
     sentence_id: sentenceId,
     concept_id: conceptId,
@@ -58,6 +41,18 @@ export const saveConcept = async (supabase, {
   if (deckSentenceError) {
     console.error('Error saving deck_sentence', deckSentenceError)
     return { error: deckSentenceError }
+  }
+
+  const { error: deckConceptError } = await supabase.from('Cards').insert([{
+    sentence_id: sentenceId,
+    user_id: userId,
+    deck_id: deckId,
+    concept_id: conceptId,
+  }])
+
+  if (deckConceptError) {
+    console.error('Error saving deck_concept', deckConceptError)
+    return { error: deckConceptError }
   }
 
   return { data }

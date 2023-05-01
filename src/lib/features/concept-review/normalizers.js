@@ -86,7 +86,7 @@ export const normalizeDeck = ({ deckData }) => {
     id: deckData.Decks.id,
     title: deckData.Decks.title,
     isPersonal: deckData.Decks.is_personal,
-    cards: deckData.Decks.Concepts_Decks.map(({ Concepts: concept}) => {
+    cards: deckData.Decks.Cards.map(({ Concepts: concept}) => {
       return normalizeCard({ concept, deckId: deckData.Decks.id, relatedSentence: concept.Concepts_Sentences[0] })
     })
   }

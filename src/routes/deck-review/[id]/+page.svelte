@@ -2,7 +2,6 @@
   import { writable } from 'svelte/store'
   import ConceptTranslate from "$lib/components/concept-translate.svelte";
   import ReviewerCard from "$lib/components/reviewer-card.svelte";
-  import ReviewCardConceptTranslate from "$lib/components/review-card-concept-translate.svelte";
   import Reviewer from '$lib/components/reviewer.svelte';
   import cardBackground from '$lib/features/story-review/images/card-background.png';
   export let data
@@ -37,9 +36,7 @@
 
     <div slot="back" class="flex flex-col gap-5 h-full w-full rounded-[50px] bg-secondary">
       {#if slide.id}
-        <ConceptTranslate card={slide} on:review={e => {
-          onReview(e.detail)
-        }}/>
+        <ConceptTranslate card={slide} on:review={e => {onReview(e.detail)}}/>
       {/if}
     </div>
   </ReviewerCard>

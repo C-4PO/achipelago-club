@@ -81,7 +81,7 @@
       {#if rating >= 4}
         <Icon icon="mingcute:check-fill" class="inline-block text-white text-lg" width="40" height="40" />
       {:else if rating >= 2}
-  `      <Icon icon="ph:smiley-meh-bold" class="inline-block text-white text-lg" width="40" height="40" />
+        <Icon icon="ph:smiley-meh-bold" class="inline-block text-white text-lg" width="40" height="40" />
       {:else}
         <Icon icon="mingcute:close-fill" class="inline-block text-white text-lg" width="40" height="40"/>
       {/if}

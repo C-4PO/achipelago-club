@@ -4,7 +4,7 @@ import { processStory } from '$lib/features/story/utilities.js'
 import { translate, saveStory } from '$lib/features/story/functions.js'
 import { getPersonalDeck } from '$lib/features/story/functions.js'
 
-export const POST = async ({ request, locals: { supabase, getSession } }) => {
+export const POST = async ({ request, locals: { supabase, getSession  } }) => {
   const session = await getSession()
   const { user } = session || {}
 

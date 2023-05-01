@@ -1,6 +1,5 @@
 <script>
   import ReviewerCard from "./reviewer-card.svelte";
-  import ReviewCardConceptTranslate from "./review-card-concept-translate.svelte";
 
   import { tweened } from "svelte/motion";
   import { cubicOut } from "svelte/easing";

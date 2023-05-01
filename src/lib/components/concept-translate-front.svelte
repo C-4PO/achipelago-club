@@ -1,5 +1,4 @@
 <script>
-  import { onMount }  from 'svelte'
   import { createEventDispatcher } from 'svelte'
   import { Sveltik, Form, Field } from 'sveltik'
   import * as yup from 'yup'
@@ -25,10 +24,6 @@
   const onSubmit = (values, { errors }) => {
     dispatch('flip', values)
   }
-
-  onMount(() => {
-    console.log(form)
-  })
 
 </script>
 
@@ -61,11 +56,7 @@
         class:input-error={meta.error}
         on:input={field.handleInput}
         on:blur={field.handleBlur}
-        on:keyup={(event) => {
-          if (event.key === 'Enter' && !meta.error) {
-            document.getElementById("form").requestSubmit();
-          }
-        }}
+        on:keyup={(event) => console.log(`should enter`)}
       /> 
     </Field>
     <button type="submit" class="btn btn-primary rounded-full">Next</button>

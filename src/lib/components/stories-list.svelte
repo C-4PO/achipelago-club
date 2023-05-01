@@ -11,8 +11,6 @@
   export let stories = [];
   export let personalDeck;
 
-  console.log(personalDeck)
-
   const goToCreate = () => {
     dispatch('navigate', 'create')
   }

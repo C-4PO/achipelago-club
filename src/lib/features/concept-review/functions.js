@@ -6,7 +6,16 @@ import {
 export function getDeck(supabase, { deckId, userId }) {
   return supabase
     .from('Users_Decks')
-    .select("Decks(*, Concepts_Decks(*, Concepts(*, Concepts_Sentences(*, Sentences(*)))))")
+    .select("Decks(*, Cards(*, Concepts(*, Concepts_Sentences(*, Sentences(*)))))")
+    .eq('user_id', userId)
+    .eq('deck_id', deckId)
+    .single()
+}
+
+export function getShuffledDeck(supabase, { deckId, userId }) {
+  return supabase
+    .from('Users_Decks')
+    .select("Decks(*, Cards(*, Concepts(*, Concepts_Sentences(*, Sentences(*)))))")
     .eq('user_id', userId)
     .eq('deck_id', deckId)
     .single()
@@ -29,7 +38,7 @@ export function getConceptsByIds(supabase, { conceptIds }) {
 
 export function getReviews(supabase, { deckId }) {
   return supabase
-    .from('Concepts_Decks')
+    .from('Cards')
     .select('* , Concepts(*, Concepts_Reviews(*))')
     .eq('deck_id', deckId)
 }
@@ -136,10 +145,10 @@ async function addConcept(supabase, { concept, userId, deckId }) {
     console.log('Concepts_Sentences relation already exists:', existingRelation[0]);
   }
 
-  // If a new concept was created, insert the relation in the Concepts_Decks table
+  // If a new concept was created, insert the relation in the Cards table
   if (isNewConcept) {
     const { error: insertDeckRelationError } = await supabase
-      .from('Concepts_Decks')
+      .from('Cards')
       .insert({
         concept_id: conceptId,
         deck_id: deckId,

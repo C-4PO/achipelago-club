@@ -1,4 +1,3 @@
-<!-- AvatarPicker.svelte -->
 <script>
   import { createEventDispatcher } from "svelte";
   import { createAvatar } from '@dicebear/core';

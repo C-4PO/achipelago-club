@@ -49,7 +49,5 @@
           <StoryForm on:save={(event) => handleSaveWords(event.detail)} on:navigate={handleNavigate}/>
       </div>
     </ReviewerCard>  
-
   </div>
-
 </ReviewerCard>

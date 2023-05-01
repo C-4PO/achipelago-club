@@ -5,8 +5,6 @@
   import { onMount } from 'svelte';
   import { interpret } from 'xstate';
   import { Splide, SplideSlide } from '@splidejs/svelte-splide';
-  import ReviewCarousel from '$lib/components/review-carousel.svelte';
-  import ReviewCard from '$lib/components/review-card.svelte';
   import { reviewService } from '$lib/features/story-review/service.js';
   import cardBackground from '$lib/features/story-review/images/card-background.png';
 
@@ -68,19 +66,3 @@
     </div>
   </ReviewerCard>
 </Reviewer>
-
-<!-- <div class="h-full p-3 flex flex-col gap-3">
-  <div class="h-full flex justify-center overflow-hidden items-center relative rounded-lg">
-    <ReviewCarousel
-      context={context}
-      step={step}
-      on:next={next}
-      on:review={(e) => onReview(e.detail)}
-    />
-    {#if $step[`intro`]}
-      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-secondary to-transparent flex items-center justify-center" >
-        <button class="btn btn-primary btn-lg" on:click={() => send('START')}>Start</button>
-      </div>
-    {/if}
-  </div>
-</div> -->
