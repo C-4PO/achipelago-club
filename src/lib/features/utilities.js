@@ -1,5 +1,5 @@
 import { diffChars } from 'diff'
-import uniq from 'lodash/uniq'
+import uniq from 'lodash/uniq.js'
 import { interpret, State } from 'xstate';
 import { readable } from 'svelte/store'
 
@@ -31,8 +31,6 @@ export async function singleFileUpload({ url, file, additionalData }) {
     method: "POST",
     body: formData,
   });
-
-  
 }
 
 async function multiFileUpload({ url, files, additionalData }) {

@@ -4,10 +4,11 @@
   import ReviewerCard from "$lib/components/reviewer-card.svelte";
   import Reviewer from '$lib/components/reviewer.svelte';
   import cardBackground from '$lib/features/story-review/images/card-background.png';
-  export let data
   import { reviewService } from '$lib/features/concept-review/services'
-
+  
+  export let data
   const cards = data.deck.cards
+  const summary = data.deck.summary
 
   const { context, step, send, transitions, states, onReview } = reviewService({
     cards,

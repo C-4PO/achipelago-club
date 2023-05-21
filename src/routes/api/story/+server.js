@@ -4,7 +4,7 @@ import { processStory } from '$lib/features/story/utilities.js'
 import { translate, saveStory } from '$lib/features/story/functions.js'
 import { getPersonalDeck } from '$lib/features/story/functions.js'
 
-export const POST = async ({ request, locals: { supabase, getSession  } }) => {
+export const POST = async ({ request, locals: { supabase, getSession } }) => {
   const session = await getSession()
   const { user } = session || {}
 
@@ -13,8 +13,15 @@ export const POST = async ({ request, locals: { supabase, getSession  } }) => {
     originalStory,
     translatedStory
   } = await request.json()
-  
-  translatedStory = translatedStory ? translatedStory : originalStory ? await translate({ text: originalStory }) : ''
+
+  title = title ? title : originalStory.split(`.`)[0]
+
+  try {
+    translatedStory = translatedStory ? translatedStory : originalStory ? await translate({ text: originalStory }) : ''
+    console.log('translatedStory', translatedStory)
+  } catch (error) {
+    console.log(`error`, error)
+  }
 
   const [
     originalStorySentences,

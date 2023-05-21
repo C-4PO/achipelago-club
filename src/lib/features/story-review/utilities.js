@@ -1,5 +1,5 @@
 import { diffChars } from 'diff'
-import { uniq } from 'lodash'
+import uniq from 'lodash/uniq.js'
 
 export function getRemovedCharIndexes(str1, str2) {
   const diff = diffChars(str1, str2);

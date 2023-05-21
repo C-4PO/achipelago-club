@@ -1,12 +1,12 @@
 <script>
   import StoryForm from '$lib/components/story-form.svelte';
-  import get from 'lodash/get';
+  import get from 'lodash/get.js';
   import ReviewerCard from '$lib/components/reviewer-card.svelte';
   import { createEventDispatcher } from 'svelte';
+  import { saveWords } from '$lib/features/story-generate/api.js';
+
   let saveWordsPromise = null;
   const dispatch = createEventDispatcher();
-
-  import { saveWords } from '$lib/features/story-generate/api.js';
 
   export let cardBackground = '';
   export let isFlipped;
@@ -48,6 +48,6 @@
       <div slot="front" class="h-full">
           <StoryForm on:save={(event) => handleSaveWords(event.detail)} on:navigate={handleNavigate}/>
       </div>
-    </ReviewerCard>  
+    </ReviewerCard>
   </div>
 </ReviewerCard>

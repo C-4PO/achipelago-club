@@ -1,4 +1,4 @@
-import union from 'lodash/union'
+import union from 'lodash/union.js'
 import dayjs from 'dayjs'
 
 export const normalizeCard = ({ concept, deckId, relatedSentence }) => {

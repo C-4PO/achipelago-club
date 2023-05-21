@@ -84,3 +84,16 @@ export function getCardsToReview(cards) {
     .filter(card => card.review.dueDate.isBefore(tomorrow()));
 }
 
+export function summerizeCards(deck) {
+  const totalCards = deck.cards.length;
+  const totalCardsDue = deck.cards.filter(card => card.review.dueDate.isBefore(tomorrow())).length;
+  const totalCardsOverdue = deck.cards.filter(card => card.review.dueDate.isBefore(dayjs())).length;
+  const totalNewCards = deck.cards.filter(card => card.review.repetition === 0).length;
+
+  return {
+    totalCards,
+    totalCardsDue: totalCardsDue - totalCardsOverdue,
+    totalCardsOverdue,
+    totalNewCards,
+  }
+}

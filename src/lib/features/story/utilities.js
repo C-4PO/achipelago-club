@@ -1,6 +1,6 @@
 import { dictionary } from '$lib/dictionaries/dictionary'
 import { verbs } from '$lib/dictionaries/verb-conjugation'
-import flatten from 'lodash/flatten'
+import flatten from 'lodash/flatten.js'
 
 export function processStory({ story }) {
   const paragraphs = getParagraphs(story)

@@ -1,7 +1,7 @@
 <script>
   import ReviewSentence from '$lib/components/review-sentence.svelte';
   import ReviewWordEntry from '$lib/components/review-word-entry.svelte'
-  import uniq from 'lodash/uniq'
+  import uniq from 'lodash/uniq.js'
 
   import { diffChars } from 'diff'
 	import { createEventDispatcher } from 'svelte';

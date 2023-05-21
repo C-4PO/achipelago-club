@@ -1,7 +1,7 @@
 import { generateStoryFromPrompt } from '$lib/features/story-generate/functions.js'
 import openai from '$lib/features/story-generate/config.js'
 
-export const POST = async ({ request, locals: { supabase, getSession, } }) => {
+export const POST = async ({ request, locals: { supabase, getSession, }}) => {
   const session = await getSession()
   const { user } = session || {}
 
@@ -12,7 +12,6 @@ export const POST = async ({ request, locals: { supabase, getSession, } }) => {
     tense,
     mood,
   } = await request.json()
-
 
   const { data, error } = await generateStoryFromPrompt(openai, { prompt })
 

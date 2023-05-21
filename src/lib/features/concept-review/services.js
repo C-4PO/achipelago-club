@@ -4,7 +4,7 @@ import { normalizeReviewClient, normalizeCardClient } from './normalizers';
 import { derived} from 'svelte/store'
 import { tomorrow } from './utilities';
 import { evaluateConcept } from './api';
-import { concat } from 'lodash';
+import concat from 'lodash/concat.js';
 
 import { flashCardMachine, transitions, states } from './machines';
 
@@ -62,7 +62,6 @@ export const reviewService = ({
       isFinished,
     },
   });
-
 
   const step = derived(
     state,

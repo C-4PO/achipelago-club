@@ -5,7 +5,7 @@
   import Icon from '@iconify/svelte';
 
   import { diffChars } from 'diff'
-  import union from 'lodash/union'
+  import union from 'lodash/union.js'
 	import { createEventDispatcher } from 'svelte';
   import { cleanSentence } from '$lib/features/story/utilities'
   import { getRemovedCharIndexes }  from '$lib/features/story-review/utilities'

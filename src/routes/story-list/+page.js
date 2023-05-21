@@ -1,6 +1,7 @@
 import { getStories } from '$lib/features/story/functions.js';
+import { getDecks } from '$lib/features/decks/functions.js';
+import { normalizeShallowDeck } from '$lib/features/decks/normalizers.js';
 import { redirect } from '@sveltejs/kit';
-import { getDecks } from '$lib/features/story/functions.js'
 
 export async function load({ parent }) {
   const { supabase, session } = await parent()
@@ -8,20 +9,23 @@ export async function load({ parent }) {
   if (!session) {
     throw redirect(303, '/');
   }
-  const { data: decks, error: deckError } = await getDecks(supabase, { userId: session.user.id })
+  
+  const { data: decks, error: storyDeckError } = await getDecks(supabase, { userId: session.user.id })
 
-  if (deckError) {
-    console.log(deckError)
-    console.log(`deck error`)
-    return { error: deckError }
+  if (storyDeckError) {
+    return { error: storyDeckError }
   }
 
-  const { data: stories, error } = await getStories(supabase, { userId: session.user.id })
+  const { data: normalizedDecks } = normalizeShallowDeck({ decks })
 
-  if (error) {
-    console.log(`story error`)
-    return { error }
-  }
+  const { reviewDecks, storyDecks } = normalizedDecks.reduce((acc, deck) => {
+    if (deck.type === 'REVIEW') {
+      acc.reviewDecks.push(deck)
+    } else if (deck.type === 'STORY') {
+      acc.storyDecks.push(deck)
+    }
+    return acc
+  }, { reviewDecks: [], storyDecks: [] })
 
-  return { stories, decks };
+  return { reviewDecks, storyDecks  };
 }

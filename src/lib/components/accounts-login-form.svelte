@@ -36,7 +36,6 @@
     dispatch('goToSignin')
   }
 
-
   const onSubmit = (values, { errors }) => {
     dispatch('submit', values)
   }

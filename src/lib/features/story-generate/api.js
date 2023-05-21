@@ -23,7 +23,7 @@ export async function saveWords({
 }
 
 export async function generateStory(payload) {
-  return fetch('/api/create-story', {
+  return fetch('/api/draft', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

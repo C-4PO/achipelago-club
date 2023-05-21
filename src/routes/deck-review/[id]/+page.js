@@ -1,4 +1,5 @@
 import { getDeck, buildConceptCards } from '$lib/features/concept-review/functions'
+import { summerizeCards } from '$lib/features/concept-review/utilities'
 import {
   normalizeDeck,
   normalizeRelatedConceptsInConceptCards,
@@ -32,5 +33,6 @@ export async function load({ params, parent }) {
   })
 
   deck.cards = cards
+  deck.summary = summerizeCards(deck)
   return { deck };
 }

@@ -36,11 +36,10 @@ export const flashCardMachine = createMachine(
         return context
       },
       // Properties
-      enableShuffle: true,
       currentCardIndex: 0,
       cards: [], // modified by the spaced repetition algorithm
       card: null,
-      tableCards: [{key: 1}, { key: 2}],
+      tableCards: [{ key: 1}, { key: 2 }],
       drawPile: [], // the list of cards sorted by the spaced repetition algorithm
       lastCard : null,
     },
@@ -102,9 +101,12 @@ export const flashCardMachine = createMachine(
         }
       }),
       drawCards: assign((context, event) => {
+        debugger
         const lastCard = context.card
         const drawPile = context.fetchDrawPile({ context, event }); // apply the algorithm
         const card = drawPile[0]; // get the next card to review
+
+        console.log({ card })
 
         return {
           ...context,
@@ -113,7 +115,8 @@ export const flashCardMachine = createMachine(
           drawPile,
           tableCards: [
             ...context.tableCards.slice(0, context.currentCardIndex),
-            {...card, key: context.currentCardIndex + 1},{key: context.currentCardIndex + 2}
+            {key: context.currentCardIndex + 1, ...card, initialized: true},
+            {key: context.currentCardIndex + 2}
           ]
         }
       }),
@@ -133,6 +136,7 @@ export const flashCardMachine = createMachine(
     },
     guards: {
       isFinished: (context, event) => {
+        debugger
         return context.isFinished({ context, event })
       },
     },
