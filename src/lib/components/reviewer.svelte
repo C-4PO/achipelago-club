@@ -44,7 +44,7 @@
       class="slide flex justify-center items-center font-size-24 relative aspect-[13/20] p-2"
       style="--i: {index}; transform: translateX(-{$carouselPosition}%);"
     >
-      <slot index={index} slide={slide}/>
+      <slot index={index} slide={slide} show={index >= cardIndex ||  index <= cardIndex} />
     </div>
   {/each}
 </div>

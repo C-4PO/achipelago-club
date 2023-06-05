@@ -1,17 +1,18 @@
 import { redirect } from '@sveltejs/kit';
 import { getStoryDeck } from '$lib/features/decks/functions';
 import { normalizeStoryDeck } from '$lib/features/decks/normalizers';
+import { generateLesson } from '$lib/features/lessons/functions';
 
-export async function load({ params, parent }) {
-  const { supabase, session } = await parent()
+export async function load({ params, locals: { supabase }, ...rest }) {
+  // const { user } = await getSession()
 
   const {
     id: deckId,
   }  = params
 
-  if (!session) {
-    throw redirect(303, '/')
-  }
+  // if (!user) {
+  //   throw redirect(303, '/')
+  // }
 
   const { data: dbStoryDeck, error: dbStoryDeckError } = await getStoryDeck(supabase, {
     deckId,
@@ -45,17 +46,20 @@ export async function load({ params, parent }) {
 
   // TODO: generate lession function given sides 
 
-  const lesson = [
-    ...cards.map(card => ({
-      card,
-      stage: `read`,
-      gradeWeight: 1,
-      sides: [{type: `ReadListen`}, {type: `ReadListen`}, {type: `ReadListen`}],
-    })),
-  ]
+  const lesson = await generateLesson({
+    sides: [
+      {type: `ReadListen`},
+      {type: `ReadListen`},
+      {type: `ReadListen`}
+    ],
+    deck: storyDeck,
+  })
+
+  console.log({ lesson })
 
   return {
     title,
     lesson,
+    cards,
   }
 }

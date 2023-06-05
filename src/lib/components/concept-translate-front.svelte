@@ -14,6 +14,7 @@
 
   const dispatch = createEventDispatcher();
 
+
   const validationSchema = yup.object().shape({
     translation: yup.string().required('Please enter a translation')
   })

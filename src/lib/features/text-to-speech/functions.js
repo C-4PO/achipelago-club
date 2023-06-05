@@ -1,24 +1,22 @@
 import { TextToSpeechClient } from "@google-cloud/text-to-speech"
-import {
-  GOOGLE_CLOUD_TEXT_TO_SPEECH
-} from '$env/static/private';
 
-const client = new TextToSpeechClient({
-  projectId: 'spanico',
-  credentials: {
-    private_key: GOOGLE_CLOUD_TEXT_TO_SPEECH,
-    client_email: `chris@parkgate.io`
-  }
-});
+const client = new TextToSpeechClient();
 
 export const speechToText = async({ text }) => {
-  const request = {
-    input: { text: text },
-    voice: { languageCode: 'es-MX', ssmlGender: 'NEUTRAL' },
-    audioConfig: { audioEncoding: 'MP3' },
-  };
+  try {
+    const request = {
+      input: { text: text },
+      voice: {
+        languageCode: 'es-MX',
+        ssmlGender: 'MALE',
+      },
+      audioConfig: { audioEncoding: 'MP3', speakingRate: 0.65, },
+    };
+    const [ response ] = await client.synthesizeSpeech(request);
 
-  const [response] = await client.synthesizeSpeech(request);
+    return { data: response.audioContent }
 
-  console.log({ response })
+  } catch (error) {
+    return { error }
+  }
 }

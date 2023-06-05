@@ -53,5 +53,5 @@
 </script>
 
 {#each words as word, i}
-  <span style="background-color:{wordColors[i]}">{word.displayWord}</span>{#if i < words.length - 1}<span style="background-color:{spaceColors[i]}">&nbsp;</span>{/if}
+  <span style="background-color:{wordColors[i]}; display: inline">{word.displayWord}</span>{#if i < words.length - 1}<span style="background-color:{spaceColors[i]}; display: inline">&nbsp;</span>{/if}
 {/each}
