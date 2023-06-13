@@ -30,27 +30,25 @@
 
   onMount(() => {
     if (isLeadingAudio) {
-      lesson.forEach(lesson => {
-        lesson.card = {
-          ...lesson.card,
-          audio: new Promise(async (resolve, reject) => {
-            if (!isLeadingAudio) return resolve()
-            const response = await fetch(`/api/text-to-speech`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'audio/mp3',
-              },
-              body: JSON.stringify({ text: lesson.card.sentence }),
-            })
-            const audioBuffer = await response.arrayBuffer();
-            const audioUrl = URL.createObjectURL(new Blob([audioBuffer]))
-            
-            return resolve(audioUrl)
-          })
-        }
-      })
+      Promise.all(
+        lesson.map(lesson =>
+          fetch(`/api/text-to-speech`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',  // change to 'application/json'
+            },
+            body: JSON.stringify({ text: lesson.card.sentence }),
+          }).then(response => response.arrayBuffer())
+        )
+      ).then((audioBuffers) => {
+        const audioUrls = audioBuffers.map(audioBuffer => URL.createObjectURL(new Blob([audioBuffer], {type: 'audio/mp3'})));  // specify the Blob content type
+        lesson = lesson.map((lesson, index) => {   // assign updated lesson array to itself
+          lesson.card.audio = audioUrls[index];
+          return lesson;
+        });
+      });
     }
-  })
+  });
 
   const { context, step, send, slides, currentIndex, onNext } = deckReviewService({
     lesson,  

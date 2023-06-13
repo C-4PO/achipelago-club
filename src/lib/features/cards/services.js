@@ -17,7 +17,6 @@ export const cardReviewService = ({
     },
     guards: {
       validationFunction: (context, event) => {
-        console.log(context.currentIndex, pile.sides.length - 1)
         return context.currentIndex === pile.sides.length - 1
       }
     }

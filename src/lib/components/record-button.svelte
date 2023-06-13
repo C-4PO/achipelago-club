@@ -3,12 +3,14 @@
   import Icon from '@iconify/svelte';
 
   export let disabled = false
+  export let label = 'Record';
 
   const dispatch = createEventDispatcher();
 
   let mediaRecorder;
   let chunks = [];
   let audioIsRecording = false;
+
   let timeRef
   let time = 0
 
@@ -89,5 +91,9 @@
       <Icon icon="icon-park-solid:voice" class=" inline-block" width="30" height="30" />
     {/if}
   </button>
-  <p class="text-primary">{time}s</p>
+  {#if audioIsRecording}
+    <p class="text-primary">{time}s</p>
+  {:else}
+    <p class="text-primary">Speak</p>
+  {/if}
 </div>

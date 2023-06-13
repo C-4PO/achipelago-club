@@ -7,12 +7,14 @@
   export let audio;
   export let audioType = 'mp3';
   export let playIcon = 'mingcute:play-fill';
+  export let label = 'Play';
   export let disabled = false;
 
   let howl;
   let duration;
   let timerRef;
   let time = 1;
+  let loaded = false
 
   let audioIsPlaying = false;
 
@@ -27,9 +29,9 @@
   }
 
   onMount(() => {
-    audio.then(async (audioUrl) => {
+    if (audio) {
       howl = new Howl({
-        src: [audioUrl],
+        src: [audio],
         format: [audioType],
         onplay: () => {
           time = 0
@@ -48,14 +50,21 @@
           clearInterval(timerRef)
           handleAudioFinished()
         }, // Dispatch event when audio finishes playing
-        onload: () => duration = Math.floor(howl._duration),
+        onload: () => {
+          howl.play();
+          loaded = true
+          duration = Math.floor(howl._duration)
+          handleAudioPlaying()
+        },
+        onloaderror: (e) => {
+          console.log(howl)
+          console.log(e)
+        }
       });
-
-      howl.play();
-    })
+    }
   })
 
-  function playAudio(audioUrl) {
+  function playAudio() {
     if (audioIsPlaying) {
       howl.stop();
       return;
@@ -72,28 +81,22 @@
   }
 </style>
 <div class="flex flex-col items-center">
-{#if audio}
-  {#await audio}
+  {#if !loaded}
     <button class="btn btn-circle btn-primary w-[75px] h-[75px]">
       <span class="loading loading-spinner"></span>
     </button>
-  {:then audioUrl}
-  <button class="btn btn-circle btn-primary w-[75px] h-[75px]"  on:click={() => playAudio(audioUrl)} disabled={disabled && !audioIsPlaying}>
-    {#if audioIsPlaying}
-      <Icon icon="mingcute:pause-fill" class="inline-block" width="30" height="30" />
-    {:else}
-      <Icon icon={playIcon} class="inline-block" width="30" height="30" />
-    {/if}
-  </button>
-  {:catch error}
-    <button class="btn btn-circle btn-primary w-[75px] h-[75px]">
-      <Icon icon="mingcute:check-fill" class="inline-block" width="30" height="30" />
+  {:else}
+    <button class="btn btn-circle btn-primary w-[75px] h-[75px]"  on:click={() => playAudio()} disabled={disabled && !audioIsPlaying}>
+      {#if audioIsPlaying}
+        <Icon icon="mingcute:pause-fill" class="inline-block" width="30" height="30" />
+      {:else}
+        <Icon icon={playIcon} class="inline-block" width="30" height="30" />
+      {/if}
     </button>
-  {/await}
-{:else}
-  <button class="btn btn-circle btn-primary w-[75px] h-[75px]">
-    <span class="loading loading-spinner"></span>
-  </button>
-{/if}
-  <span class="text-primary time">{time}s / {duration}s</span>
+  {/if}
+  {#if audioIsPlaying}
+    <span class="text-primary time">{time}s / {duration}s</span>
+  {:else}
+    <span class="text-primary">{label}</span>
+  {/if}
 </div>

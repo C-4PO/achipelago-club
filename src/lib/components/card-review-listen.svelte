@@ -10,18 +10,17 @@
 
   export let card
 
-  let voiceOverAudioPromise = null
+  let voiceOverAudio = null
   let voiceOverAudioType = null
   let playSuccess = false
   let recordSuccess = false
   let speechSuccess = false
-  let audioIsPlaying = false;
-  let evaluationSuccess = false
-
+  let audioIsPlaying = false
 
   const next = () => {
-    evaluationSuccess = true
-    //dispatch('next')
+    dispatch('next', {
+      voiceOverAudio
+    })
   }
 
   function handleAudioPlaying() {
@@ -36,7 +35,7 @@
   function setVoiceOver({ audioUrl, audioType }) {
     recordSuccess = true
     handleAudioFinished()
-    voiceOverAudioPromise = Promise.resolve(audioUrl)
+    voiceOverAudio = audioUrl
     voiceOverAudioType = audioType
   }
 </script>
@@ -49,6 +48,7 @@
     <div class="flex gap-2">
       <SpeechButton
         playIcon="mingcute:play-fill"
+        label="Listen"
         bind:audio={card.audio}
         audioType="mp3"
         on:audioPlaying={handleAudioPlaying}
@@ -65,24 +65,22 @@
         />
       {/if}
       {#if recordSuccess}
-        <SpeechButton
-          bind:audio={voiceOverAudioPromise}
-          audioType={voiceOverAudioType}
-          on:audioPlaying={handleAudioPlaying}
-          on:audioFinished={() => {
-            handleAudioFinished()
-            speechSuccess = true
-          }}
-          disabled={audioIsPlaying}
-          playIcon="icomoon-free:bubble"
-        />
+        {#key voiceOverAudio}
+          <SpeechButton
+            label="Check"
+            bind:audio={voiceOverAudio}
+            audioType={voiceOverAudioType}
+            on:audioPlaying={handleAudioPlaying}
+            on:audioFinished={() => {
+              handleAudioFinished()
+              speechSuccess = true
+            }}
+            disabled={audioIsPlaying}
+            playIcon="icomoon-free:bubble"
+          />
+        {/key}
       {/if}
     </div>
-    {#if evaluationSuccess}
-      <div class="bg-white flex flex-wrap justify-center rounded-lg p-2">
-        <ReviewerWords words={card.words}/>
-      </div>
-    {/if}
   </div>
   <button type="submit" class="btn btn-primary rounded-full" on:click={next} disabled={audioIsPlaying || !speechSuccess}>Next</button>
 </div>
