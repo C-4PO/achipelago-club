@@ -42,8 +42,8 @@ export const cardReviewService = ({
     $state => $state.context.isFlipped
   )
 
-  const onNext = ({ review }) => {
-    send('FLIP', review)
+  const onNext = ({ shared }) => {
+    send('FLIP', shared)
   }
 
   return {

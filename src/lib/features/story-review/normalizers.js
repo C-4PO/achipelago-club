@@ -49,16 +49,6 @@ export const normalizeSentenceCards = ({ story }) => {
           grade: null,
         }
       }),
-      // {
-      //   type: `ParagraphReview`,
-      //   front: {
-      //     paragraph,
-      //   },
-      //   back: {
-      //     paragraph,
-      //   },
-      //   grade: null,
-      // }
     ]
   }, [])
 }

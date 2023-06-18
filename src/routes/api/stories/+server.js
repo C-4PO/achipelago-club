@@ -65,14 +65,14 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
       return new Response(JSON.stringify({ ...createdSentenceCardsError }), { status: 500 })
     }
 
-    const { data: cardReviews, ...cardReviewError} = await createCardsReviews(supabase, {
-      cards: createdSentenceCards,
-      userId: user.id,
-    })
+    // const { data: cardReviews, ...cardReviewError} = await createCardsReviews(supabase, {
+    //   cards: createdSentenceCards,
+    //   userId: user.id,
+    // })
 
-    if (!isEmpty(cardReviewError)) {
-      return new Response(JSON.stringify({...cardReviewError }), { status: 500 })
-    }
+    // if (!isEmpty(cardReviewError)) {
+    //   return new Response(JSON.stringify({...cardReviewError }), { status: 500 })
+    // }
 
     const { data: deckCards, ...associateCardsToDeckError } = await associateCardsToDeck(supabase, {
       cards: createdSentenceCards,

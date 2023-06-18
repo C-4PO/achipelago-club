@@ -7,6 +7,7 @@
   export let pile
 
   const dispatch = createEventDispatcher()
+  let shared = {}
 
   const onFinish = async (context, event) => {
     dispatch('next')
@@ -17,7 +18,11 @@
   } = cardReviewService({ pile, onFinish })
 
   const next = ({ detail }) => {
-    onNext({ response: detail })
+    shared = {
+      ...shared,
+      ...detail
+    }
+    onNext({ shared })
   }
 </script>
 
@@ -29,6 +34,7 @@
           bind:key={$front.key}
           bind:card={pile.card}
           bind:type={$front.type}
+          bind:shared={shared}
           on:next={next}
         />
       {/if}
@@ -39,6 +45,7 @@
           bind:key={$back.key}
           bind:card={pile.card}
           bind:type={$back.type}
+          bind:shared={shared}
           on:next={next}
         />
       {/if}

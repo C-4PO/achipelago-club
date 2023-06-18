@@ -26,7 +26,7 @@ export let generateLesson = async ({ sides,  deck} ) => {
       cardId: card.id,
       stage: `read`,
       gradeWeight: 1,
-      sides: [{type: `ReadListen`}],
+      sides,
     })),
   ]
 

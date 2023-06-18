@@ -17,9 +17,9 @@ export const normalizeShallowDeck = ({ decks }) => {
           type,
           isPersonal: is_personal,
           reviewSummary: summerizeReviews({
-            reviews: Decks_Cards.map(({ Cards }) => {
-              return Cards.Cards_Reviews[0]
-            })
+            reviews: Decks_Cards.reduce(( reviews, { Cards }) => {
+              return [ ...reviews, ...Cards.Cards_Reviews ]
+            }, [])
           })
         }
       }

@@ -21,7 +21,17 @@ export const normalizeReview = ({ review }) => {
   }
 }
 
-export const summerizeReviews = ({ reviews }) => {
+export const summerizeReviews = ({ reviews = [] }) => {
+  console.log(`reviews`, reviews)
+  if (reviews.length === 0) {
+    return {
+      totalCards: 0,
+      totalCardsDue: 0,
+      totalCardsOverdue: 0,
+      totalNewCards: 0,
+    }
+  }
+
   const totalCardsDue = reviews.filter(({ due_date }) => dayjs(due_date).isAfter(dayjs()) && dayjs(due_date).isBefore(tomorrow())).length;
   const totalCardsOverdue = reviews.filter(({ due_date, interval }) => dayjs(due_date).isBefore(dayjs()) && interval > 3).length;
   const totalNewCards = reviews.filter(({ repetition }) => repetition === 0).length;

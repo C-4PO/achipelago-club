@@ -28,6 +28,7 @@
 	"dependencies": {
 		"@dicebear/collection": "^6.0.2",
 		"@dicebear/core": "^6.0.2",
+		"@google-cloud/speech": "^5.5.0",
 		"@google-cloud/text-to-speech": "^4.2.2",
 		"@google-cloud/translate": "^7.2.0",
 		"@poppanator/sveltekit-svg": "^3.0.0",

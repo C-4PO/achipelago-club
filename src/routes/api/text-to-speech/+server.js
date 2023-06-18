@@ -1,4 +1,4 @@
-import { speechToText } from '$lib/features/text-to-speech/functions.js'
+import { textToSpeech } from '$lib/features/text-to-speech/functions.js'
 
 export const POST = async ({ request, locals: { supabase, getSession } }) => {
   const session = await getSession()
@@ -8,7 +8,7 @@ export const POST = async ({ request, locals: { supabase, getSession } }) => {
     text
   } = await request.json()
 
-  const { data: audioBuffer, error } = await speechToText({ text })
+  const { data: audioBuffer, error } = await textToSpeech({ text })
 
   const headers = {
     'Content-Type': 'audio/mp3',

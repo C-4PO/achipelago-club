@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte'
   import CardReviewListen from '$lib/components/card-review-listen.svelte'
+  import CardSentenceTranslate from '$lib/components/card-sentence-translate.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -19,7 +20,7 @@
   {/key}
 {:else if type === `ReadTranslate`}
   {#key key} 
-    <h1 class="text-white">Read Translate</h1>
+    <CardSentenceTranslate card={card} on:next={next} />
   {/key}
 {:else if type === `ConceptReview`}
   {#key key} 

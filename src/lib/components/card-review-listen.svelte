@@ -4,13 +4,16 @@
   import SpeechButton from '$lib/components/speech-button.svelte'
   import RecordButton from '$lib/components/record-button.svelte'
 
+  import { gradeCardSpeak } from '$lib/features/lessons/api.js'
   import { createEventDispatcher } from 'svelte'
 
   const dispatch = createEventDispatcher()
 
   export let card
 
+  let submitPromise = null
   let voiceOverAudio = null
+  let voiceOverAudioFile = null
   let voiceOverAudioType = null
   let playSuccess = false
   let recordSuccess = false
@@ -32,11 +35,20 @@
     audioIsPlaying = false;
   }
 
-  function setVoiceOver({ audioUrl, audioType }) {
+  function setVoiceOver({ audioUrl, audioType, audioFile }) {
     recordSuccess = true
     handleAudioFinished()
     voiceOverAudio = audioUrl
     voiceOverAudioType = audioType
+    voiceOverAudioFile = audioFile
+  }
+
+  function handleAudioSubmit() {
+    submitPromise = gradeCardSpeak({
+      audioFile: voiceOverAudioFile,
+      audioType: voiceOverAudioType,
+      cardId: card.id
+    })
   }
 </script>
 
@@ -82,5 +94,13 @@
       {/if}
     </div>
   </div>
-  <button type="submit" class="btn btn-primary rounded-full" on:click={next} disabled={audioIsPlaying || !speechSuccess}>Next</button>
+  {#if !submitPromise}
+  <button type="submit" class="btn btn-primary rounded-full" on:click={handleAudioSubmit} disabled={audioIsPlaying || !speechSuccess}>Next</button>
+  {:else}
+    {#await submitPromise}
+      <button type="submit" class="btn btn-primary rounded-full" disabled>Submitting...</button>
+    {:then}
+      <button type="submit" class="btn btn-primary rounded-full" on:click={next}>Next</button>
+    {/await}
+  {/if}
 </div>

@@ -40,8 +40,9 @@
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
         const audioUrl = URL.createObjectURL(blob);
+        const audioFile = new File([blob], "recordedAudio.ogg", { type: blob.type });
 
-        dispatch('stoppedRecording', { audioUrl, audioType: `ogg` }); // Dispatch stoppedRecording event with the audio URL
+        dispatch('stoppedRecording', { audioUrl, audioType: `ogg`, audioFile}); // Dispatch stoppedRecording event with the audio URL
         stopTimer()
 
         // Do something with audioUrl, e.g. send to server
