@@ -1,7 +1,5 @@
 import { TextToSpeechClient } from "@google-cloud/text-to-speech"
 import { SpeechClient } from '@google-cloud/speech';
-import fs from 'fs';
-import path from 'path';
 
 const client = new TextToSpeechClient();
 const speechClient = new SpeechClient();
@@ -14,7 +12,7 @@ export const textToSpeech = async({ text }) => {
         languageCode: 'es-MX',
         ssmlGender: 'MALE',
       },
-      audioConfig: { audioEncoding: 'MP3', speakingRate: 0.65, },
+      audioConfig: { audioEncoding: 'MP3', speakingRate: 0.65 },
     };
     const [ response ] = await client.synthesizeSpeech(request);
 
@@ -37,9 +35,9 @@ export const speechToText = async({ audioFile, audioType }) => {
     };
 
     const config = {
-      encoding: 'OGG_OPUS', // Replace with the appropriate encoding type if different
+      encoding: 'WEBM_OPUS_VORBIS',
       sampleRateHertz: 48000,
-      languageCode: 'es-MX',
+      languageCode: 'es-mx',
       enableWordConfidence: true,
     };
 
@@ -56,8 +54,6 @@ export const speechToText = async({ audioFile, audioType }) => {
     const confidence = response.results
       .map(result => result.alternatives[0].confidence)
       .join('\n');
-
-    console.log(`Transcription: ${transcription} \n Confidence: ${confidence}`);
 
     return { data: { transcription, confidence } }
 

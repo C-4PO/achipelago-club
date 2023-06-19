@@ -1,4 +1,5 @@
 <script>
+  import { parseBuffer } from 'music-metadata';
   import { onMount, createEventDispatcher } from 'svelte';
   import Icon from '@iconify/svelte';
 
@@ -37,12 +38,17 @@
         chunks.push(e.data);
       };
 
-      mediaRecorder.onstop = async () => {
-        const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
-        const audioUrl = URL.createObjectURL(blob);
-        const audioFile = new File([blob], "recordedAudio.ogg", { type: blob.type });
 
-        dispatch('stoppedRecording', { audioUrl, audioType: `ogg`, audioFile}); // Dispatch stoppedRecording event with the audio URL
+      mediaRecorder.onstop = async () => {
+        let mimeType = mediaRecorder.mimeType;
+        const blob = new Blob(chunks, { 'type' : mimeType }); // Changed here
+
+        const audioType = mimeType.split('/')[1].split(';')[0];;
+
+        const audioUrl = URL.createObjectURL(blob);
+        const audioFile = new File([blob], "recordedAudio.${audioType}", { type: blob.type }); // Changed here
+
+        dispatch('stoppedRecording', { audioUrl, audioType: audioType, audioFile}); // Dispatch stoppedRecording event with the audio URL
         stopTimer()
 
         // Do something with audioUrl, e.g. send to server
@@ -56,6 +62,7 @@
       console.error("Error starting recording:", error);
     }
   }
+
 
   function stopRecording() {
     if (mediaRecorder) {

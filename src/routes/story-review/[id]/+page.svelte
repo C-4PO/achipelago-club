@@ -9,6 +9,8 @@
 
   export let data
 
+  let isLoading = true
+
   let {
     title,
     lesson,
@@ -46,6 +48,7 @@
           lesson.card.audio = audioUrls[index];
           return lesson;
         });
+        isLoading = false;
       });
     }
   });
@@ -69,7 +72,7 @@
     <div slot="front" class="rounded-[50px] h-full w-full overflow-hidden bg-secondary">
       {#if $step[`intro`] && index === 0}
         <div class="absolute top-[50%] left-[50%]" style="transform: translate(-50%, -50%);">
-          <button class="btn btn-primary btn-wide" on:click={() => send(`START`)}>Next</button>
+          <button class="btn btn-primary btn-wide" on:click={() => send(`START`)} disabled={isLoading}>Next</button>
         </div>
       {/if}
       <img src={cardBackground} alt="card background" class="w-full h-full object-cover"/>
