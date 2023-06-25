@@ -1,7 +1,7 @@
 <script>
     export let words = [];
 
-    let colorPriorities = {
+    export let colorPriorities = {
       "red": 1,
       "blue": 2,
       "green": 3,

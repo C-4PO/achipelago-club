@@ -49,7 +49,9 @@ export async function load({ params, locals: { supabase }, ...rest }) {
   const lesson = await generateLesson({
     sides: [
       {type: `ReadListen`},
+      {type: `ReadListenGraded`},
       {type: `ReadTranslate`},
+      {type: `ReadTranslateGraded`},
     ],
     deck: storyDeck,
   })

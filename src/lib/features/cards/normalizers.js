@@ -22,7 +22,7 @@ export const normalizeSentenceCards = ({ card }) => {
     display_words,
     translation_words,
     translation_display_words,
-    review: Cards_Reviews[0],
+    reviews: Cards_Reviews,
     word_indexes: [],
     translation_word_indexes: [],
     cards: [],
@@ -39,9 +39,10 @@ export const normalizeCard = ({
   translationSentence,
   word_indexes = [],
   translation_word_indexes = [],
-  review,
+  reviews = [],
   cards = [],
 }) => {
+
   return {
     id,
     sentence,
@@ -56,7 +57,7 @@ export const normalizeCard = ({
       displayWords: translation_display_words,
       wordIndexes: translation_word_indexes,
     }),
-    review,
+    reviews,
   }
 }
 

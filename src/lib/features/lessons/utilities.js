@@ -1,6 +1,30 @@
-function stringComparison(inputString, referenceString) {
-  const inputWords = inputString.split(' ');
-  const referenceWords = referenceString.split(' ');
+import { cleanSentence } from '$lib/features/story/utilities'
+
+export function gradeCardTranslation({ card, transcription, confidence }) {
+    const { sentence } = card;
+    const {
+      score,
+      inputWordDetails,
+      referenceWordDetails,
+      totalScore
+    } = stringComparison({ inputString: transcription, referenceString: sentence });
+
+    const grade = Math.ceil(((score / totalScore) * confidence) * 5);
+
+    return {
+      data: {
+        grade,
+        score,
+        totalScore,
+        inputWordDetails,
+        referenceWordDetails
+      }
+    };
+}
+
+function stringComparison({ inputString, referenceString }) {
+  const inputWords = cleanSentence(inputString).split(' ');
+  const referenceWords = cleanSentence(referenceString).split(' ');
 
   const inputWordCount = wordCount(inputWords);
   const referenceWordCount = wordCount(referenceWords);
@@ -34,9 +58,12 @@ function stringComparison(inputString, referenceString) {
   const lcsScore = longestCommonSubsequence(inputWords, referenceWords).length;
   score += lcsScore;
 
-  const wordDetailsArr = wordDetails(inputWords, referenceWords);
+  const { inputWordDetails, referenceWordDetails } = wordDetails(inputWords, referenceWords);
 
-  return { score, wordDetailsArr };
+  const maxPossibleLcsScore = Math.min(inputWords.length, referenceWords.length);
+  const totalScore = 3 * referenceWords.length + maxPossibleLcsScore;
+
+  return { score, inputWordDetails, referenceWordDetails, totalScore };
 }
 
 function wordCount(wordArray) {
@@ -84,15 +111,25 @@ function longestCommonSubsequence(inputWords, referenceWords) {
 
 function wordDetails(inputWords, referenceWords) {
   const lcs = new Set(longestCommonSubsequence(inputWords, referenceWords));
-  let wordDetailsArr = [];
+
+  let inputWordDetailsArr = [];
+  let referenceWordDetailsArr = [];
 
   inputWords.forEach((word, index) => {
       const inputIndex = index;
       const referenceIndex = referenceWords.indexOf(word) !== -1 ? referenceWords.indexOf(word) : null;
       const inLcs = lcs.has(word);
 
-      wordDetailsArr.push({ word, inputIndex, referenceIndex, inLcs });
+      inputWordDetailsArr.push({ word, inputIndex, referenceIndex, inLcs, displayWord: word });
   });
 
-  return wordDetailsArr;
+  referenceWords.forEach((word, index) => {
+      const referenceIndex = index;
+      const inputIndex = inputWords.indexOf(word) !== -1 ? inputWords.indexOf(word) : null;
+      const inLcs = lcs.has(word);
+
+      referenceWordDetailsArr.push({ word, inputIndex, referenceIndex, inLcs, displayWord: word });
+  });
+
+  return { inputWordDetails: inputWordDetailsArr, referenceWordDetails: referenceWordDetailsArr };
 }

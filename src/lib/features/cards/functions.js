@@ -23,3 +23,16 @@ export async function createSentenceCards(supabase, {
   return { data: savedSentenceCards }
 }
 
+export async function getCardByCardId(supabase, { cardId }) {
+  const { data: card, error: cardError } = await supabase
+    .from('Cards')
+    .select(`*, Cards_Reviews(*), Sentences(*)`)
+    .eq('id', cardId)
+    .single()
+
+  if (cardError) {
+    return { error: cardError }
+  }
+
+  return { data: card }
+}

@@ -2,12 +2,14 @@
   import { createEventDispatcher } from 'svelte'
   import CardReviewListen from '$lib/components/card-review-listen.svelte'
   import CardSentenceTranslate from '$lib/components/card-sentence-translate.svelte'
+  import CardReviewListenGraded from '$lib/components/card-review-listen-graded.svelte'
 
   const dispatch = createEventDispatcher()
 
   export let key
   export let type
   export let card
+  export let shared
 
   const next = ({ detail }) => {
     dispatch(`next`, detail)
@@ -16,15 +18,24 @@
 
 {#if type === `ReadListen`}
   {#key key} 
-    <CardReviewListen card={card} on:next={next} />
+    <CardReviewListen card={card} on:next={next} shared={shared} />
   {/key}
 {:else if type === `ReadTranslate`}
   {#key key} 
-    <CardSentenceTranslate card={card} on:next={next} />
+    <CardSentenceTranslate card={card} on:next={next} shared={shared} />
   {/key}
+{:else if type === `ReadListenGraded`}
+  {#key key} 
+    <CardReviewListenGraded card={card} on:next={next} shared={shared} />
+  {/key}
+{:else if type === `ReadTranslateGraded`}
+    <h1 class="text-white">Translation Review</h1>
+  <!-- {#key key} 
+    <CardSentenceTranslate card={card} on:next={next} />
+  {/key} -->
 {:else if type === `ConceptReview`}
   {#key key} 
-    <h1 class="text-white">Concept Review</h1>3
+    <h1 class="text-white">Concept Review</h1>
   {/key}
 {/if}
 

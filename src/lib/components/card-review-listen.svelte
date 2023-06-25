@@ -20,9 +20,9 @@
   let speechSuccess = false
   let audioIsPlaying = false
 
-  const next = () => {
+  const next = (response) => {
     dispatch('next', {
-      voiceOverAudio
+      SPEAK: response,
     })
   }
 
@@ -48,6 +48,13 @@
       audioFile: voiceOverAudioFile,
       audioType: voiceOverAudioType,
       cardId: card.id
+    })
+    .then((response) => {
+      next(response)
+    })
+    .catch((error) => {
+      submitPromise = null
+      throw error
     })
   }
 </script>
@@ -99,8 +106,8 @@
   {:else}
     {#await submitPromise}
       <button type="submit" class="btn btn-primary rounded-full" disabled>Submitting...</button>
-    {:then}
-      <button type="submit" class="btn btn-primary rounded-full" on:click={next}>Next</button>
+    {:catch error}
+      <button type="submit" class="btn btn-primary rounded-full" on:click={handleAudioSubmit} disabled={audioIsPlaying || !speechSuccess}>Retry</button>
     {/await}
   {/if}
 </div>

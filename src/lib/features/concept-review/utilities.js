@@ -75,7 +75,7 @@ export function reviewCard({ card, review }) {
       last_reviewed: new Date(),
     }
   }
-  return card.review
+  return card.reviews
 }
 
 export function getCardsToReview(cards) {

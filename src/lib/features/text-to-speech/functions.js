@@ -51,11 +51,10 @@ export const speechToText = async({ audioFile, audioType }) => {
     const transcription = response.results
       .map(result => result.alternatives[0].transcript)
       .join('\n');
-    const confidence = response.results
-      .map(result => result.alternatives[0].confidence)
-      .join('\n');
+    const confidence = Math.max(response.results
+      .map(result => parseFloat(result.alternatives[0].confidence)))
 
-    return { data: { transcription, confidence } }
+    return { data: { transcription, confidence  } }
 
   } catch (error) {
     console.error("Error in speechToText:", error);

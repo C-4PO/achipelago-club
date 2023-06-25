@@ -88,8 +88,8 @@
     100% { transform: scaleY(0.9); }
   }
   .speaker {
-  animation: vibrating 0.5s infinite;
-}
+    animation: vibrating 0.5s infinite;
+  }
 </style>
 <div class="flex flex-col items-center">
   <button class="btn btn-circle btn-primary w-[75px] h-[75px]"  on:click={handleRecordClick} disabled={disabled && !audioIsRecording}>
