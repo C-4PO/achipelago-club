@@ -9,11 +9,7 @@ export default defineConfig({
 	  // other config options
 	build: {
 		rollupOptions: {
-			plugins: [
-				inject({
-					Buffer: ['buffer', 'Buffer'],
-				}),
-			],
+			external: ['Buffer'],
 		},
 	},
 });
