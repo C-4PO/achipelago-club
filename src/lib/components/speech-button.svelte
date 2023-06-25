@@ -1,6 +1,6 @@
 <script>
   import { onMount, createEventDispatcher } from 'svelte';
-  import { Howl } from 'howler';
+  const { Howl } = require('howler');
   import Icon from '@iconify/svelte';
   const dispatch = createEventDispatcher();
 
@@ -71,7 +71,7 @@
     }
     howl.play();
   }
-</script>
+</script> 
 
 <style>
   .circular-button {
