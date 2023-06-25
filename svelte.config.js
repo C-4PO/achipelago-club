@@ -1,6 +1,6 @@
-import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/kit/vite';
 import svg from '@poppanator/sveltekit-svg';
+import adapter from '@sveltejs/adapter-vercel';
 
 const svgPlugin = svg()
 
