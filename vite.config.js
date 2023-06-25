@@ -1,11 +1,11 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { nodeLoaderPlugin } from "@vavite/node-loader/plugin"
 import { defineConfig } from 'vite';
-const inject = require('@rollup/plugin-inject')
 import nodePolyfills from "rollup-plugin-node-polyfills";
+import inject from '@rollup/plugin-inject';
 
 export default defineConfig({
-	plugins: [sveltekit(),nodeLoaderPlugin(),nodePolyfills()],
+	plugins: [sveltekit(),nodeLoaderPlugin(),nodePolyfills(),inject({ Buffer: ['Buffer', 'Buffer'] })],
 	  // other config options
 	build: {
 		rollupOptions: {
