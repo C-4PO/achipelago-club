@@ -1,6 +1,6 @@
 <script>
   import { onMount, createEventDispatcher } from 'svelte';
-  const { Howl } = require('howler');
+  import { Howl } from 'howler';
   import Icon from '@iconify/svelte';
   const dispatch = createEventDispatcher();
 
