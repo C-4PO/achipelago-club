@@ -1,7 +1,6 @@
-import translator from '$lib/features/translate/config.js';
 
 export  const translate = async({ text, from = "es", to ="en-US"}) => {
-  const translationResult = await translator.translateText(text, from, to);
+  const translationResult = { text: "" } // await translator.translateText(text, from, to);
   return translationResult.text;
 }
 

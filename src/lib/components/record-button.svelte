@@ -1,5 +1,4 @@
 <script>
-  import { parseBuffer } from 'music-metadata';
   import { onMount, createEventDispatcher } from 'svelte';
   import Icon from '@iconify/svelte';
 

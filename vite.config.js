@@ -1,23 +1,14 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { nodeLoaderPlugin } from '@vavite/node-loader/plugin';
 import { defineConfig } from 'vite';
-import inject from '@rollup/plugin-inject';
-import { createRequire } from 'module'; // Bring in the ability to create the 'require' function
-
-const require = createRequire(import.meta.url); // construct the require function
+import polyfillNode from 'rollup-plugin-polyfill-node';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default defineConfig({
     plugins: [
         sveltekit(),
+				commonjs(),
         nodeLoaderPlugin(),
-        inject({
-            Buffer: ['buffer', 'Buffer'],
-        }),
+        polyfillNode() // Add this line
     ],
-    resolve: {
-        alias: {
-            buffer: require.resolve('buffer/'),
-        },
-    },
-    // other config options
-});
+}); 
