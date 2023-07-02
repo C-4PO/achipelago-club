@@ -101,7 +101,6 @@ export const flashCardMachine = createMachine(
         }
       }),
       drawCards: assign((context, event) => {
-        debugger
         const lastCard = context.card
         const drawPile = context.fetchDrawPile({ context, event }); // apply the algorithm
         const card = drawPile[0]; // get the next card to review
@@ -136,7 +135,6 @@ export const flashCardMachine = createMachine(
     },
     guards: {
       isFinished: (context, event) => {
-        debugger
         return context.isFinished({ context, event })
       },
     },

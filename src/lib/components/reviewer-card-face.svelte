@@ -18,21 +18,20 @@
 
 {#if type === `ReadListen`}
   {#key key} 
-    <CardReviewListen card={card} on:next={next} shared={shared} />
+    <CardReviewListen card={card} on:next={next} />
   {/key}
 {:else if type === `ReadTranslate`}
   {#key key} 
-    <CardSentenceTranslate card={card} on:next={next} shared={shared} />
+    <CardSentenceTranslate card={card} on:next={next} />
   {/key}
 {:else if type === `ReadListenGraded`}
   {#key key} 
-    <CardReviewListenGraded card={card} on:next={next} shared={shared} />
+    <CardReviewListenGraded card={card} on:next={next} result={shared[`SPEAK`]} />
   {/key}
 {:else if type === `ReadTranslateGraded`}
-    <h1 class="text-white">Translation Review</h1>
-  <!-- {#key key} 
-    <CardSentenceTranslate card={card} on:next={next} />
-  {/key} -->
+  {#key key} 
+    <CardReviewListenGraded card={card} on:next={next} result={shared[`WRITE`]} />
+  {/key}
 {:else if type === `ConceptReview`}
   {#key key} 
     <h1 class="text-white">Concept Review</h1>

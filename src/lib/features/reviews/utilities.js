@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { supermemo } from 'supermemo';
 
 export function reviewCard({ review, grade, type }) {
+  debugger
   if (!review) {
     review = {
       interval: 1,

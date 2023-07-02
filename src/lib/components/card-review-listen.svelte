@@ -102,7 +102,7 @@
     </div>
   </div>
   {#if !submitPromise}
-  <button type="submit" class="btn btn-primary rounded-full" on:click={handleAudioSubmit} disabled={audioIsPlaying || !speechSuccess}>Next</button>
+    <button type="submit" class="btn btn-primary rounded-full" on:click={handleAudioSubmit} disabled={audioIsPlaying || !speechSuccess}>Next</button>
   {:else}
     {#await submitPromise}
       <button type="submit" class="btn btn-primary rounded-full" disabled>Submitting...</button>

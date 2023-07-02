@@ -9,8 +9,10 @@
   const dispatch = createEventDispatcher()
   let shared = {}
 
-  const onFinish = async (context, event) => {
-    dispatch('next')
+  const onFinish = async () => {
+    dispatch('next', {
+      results: shared,
+    })
   }
 
   const {

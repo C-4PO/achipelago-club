@@ -2,7 +2,14 @@
   import { onMount } from 'svelte'
   import Icon from '@iconify/svelte';
   import ReviewerWords from '$lib/components/reviewer-words.svelte'
-  export let shared
+  import { createEventDispatcher } from 'svelte'
+
+  export let result
+  const dispatch = createEventDispatcher()
+
+  const GREEN = '#00A676'
+  const YELLOW = '#F7B538'
+  const RED = '#780116'
 
   const {
     review,
@@ -13,12 +20,8 @@
     referenceWordDetails,
     cardId,
     confidence,
-  } = shared[`SPEAK`]
+  } = result
 
-  console.log({
-    inputWordDetails,
-    referenceWordDetails
-  })
 
   const backgroundColor = getBackgroundColor({ grade })
   const detectedColorIndices = inputWordDetails.map((detectedWord) => ({
@@ -26,39 +29,43 @@
     color: getWordColor(detectedWord),
   }))
   const referenceColorIndices = referenceWordDetails.map((detectedWord) => ({
-    index: detectedWord.inputIndex,
+    index: detectedWord.referenceIndex,
     color: getWordColor(detectedWord),
   }))
 
   const colorPriorities = {
-    '#F7B538': 1,
-    '#780116': 2,
-    '#00A676': 3,
+    [RED]: 1,
+    [YELLOW]: 2,
+    [GREEN]: 3,
   }
 
-  function getWordColor({ inputIndex, referenceIndex, inLcs }) {
+  function getWordColor({ inputIndex, referenceIndex, inLcs, word }) {
     if (inputIndex !== null && referenceIndex !== null && inLcs) {
-      return '#00A676';
-    } else if (inputIndex !== null && referenceIndex === null && !inLcs) {
-      return '#780116';
+      return GREEN;
+    } else if (inputIndex !== null || inLcs) {
+      return YELLOW;
     } else {
-      return '#F7B538';
+      return RED;
     }
   }
 
   function getBackgroundColor ({ grade }) {
     if (grade >= 4) {
-      return '#00A676'
+      return GREEN
     } else if (grade >= 3) {
-      return '#780116'
+      return YELLOW
     } else {
-      return '#F7B538'
+      return RED
     }
+  }
+
+  const next = (response) => {
+    dispatch('next')
   }
 </script>
 
-<div class="flex flex-col h-full gap-5 px-[2px] rounded-3xl justify-between" style="background-color: {backgroundColor}">
-  <div class="flex flex-col h-full gap-5 overflow-auto rounded-3xl p-5">
+<div class="flex flex-col h-full gap-5 rounded-3xl justify-between p-5" style="background-color: {backgroundColor}">
+  <div class="flex flex-col h-full gap-5 overflow-auto rounded-3xl">
     <header class="flex justify-center items-center flex-col">
       {#if grade >= 4}
         <Icon icon="mingcute:check-fill" class="inline-block text-white text-lg" width="70" height="70" />
@@ -73,15 +80,21 @@
     </header>
     <div class="rounded-3xl bg-white p-3 text-black">
       <h3 class="text-xl font-bold text-center pb-1">Detected Words</h3>
-      <p class="flex justify-center">
+      <p class="flex justify-center flex-wrap">
         <ReviewerWords words={inputWordDetails} colorIndices={detectedColorIndices} colorPriorities={colorPriorities} />
       </p>
     </div>
     <div class="rounded-3xl bg-white p-3 text-black">
       <h3 class="text-xl font-bold text-center pb-1">Expected Words</h3>
-      <p class="flex justify-center">
+      <p class="flex justify-center flex-wrap">
         <ReviewerWords words={referenceWordDetails} colorIndices={referenceColorIndices} colorPriorities={colorPriorities} />
       </p>
     </div>
   </div>
+  <button
+    class="btn-full btn-primary btn-md rounded-3xl "
+    on:click={next}
+  >
+    Next
+  </button>
 </div>

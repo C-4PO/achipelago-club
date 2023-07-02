@@ -28,7 +28,6 @@
         card,
       }
   })
-  
 
   onMount(() => {
     if (isLeadingAudio) {
@@ -56,8 +55,6 @@
   const { context, step, send, slides, currentIndex, onNext } = deckReviewService({
     lesson,  
   })
-
-  $: console.log(lesson)
 </script>
 
 <Reviewer

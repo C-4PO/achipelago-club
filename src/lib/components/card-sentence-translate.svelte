@@ -1,6 +1,7 @@
 <script>
   import ReviewerWords from '$lib/components/reviewer-words.svelte'
   import TextSizer from '$lib/components/text-sizer.svelte'
+  import { gradeCardWrite } from '$lib/features/lessons/api.js'
 
   import { createEventDispatcher } from 'svelte'
 
@@ -9,10 +10,19 @@
   export let card
 
   let userInput = ''
+  let submitPromise = null
 
-  const next = () => {
-    dispatch('next', {
-      userInput,
+  function handleTextSubmit() {
+    submitPromise = gradeCardWrite({
+      text: userInput.trim(),
+      cardId: card.id
+    }).then((response) => {
+      dispatch('next', {
+        'WRITE': response,
+      })
+    }).catch((error) => {
+      submitPromise = null
+      throw error
     })
   }
 </script>
@@ -26,5 +36,13 @@
       <textarea class="text-area text-black p-2 cardWidth:p-3 h-full rounded-3xl w-full bg-white resize-none" bind:value={userInput} placeholder="Translate to english..."></textarea>
     </div>
   </div>
-  <button type="submit" class="btn btn-primary rounded-full" on:click={next}>Next</button>
+  {#if !submitPromise}
+    <button type="submit" class="btn btn-primary rounded-full" on:click={handleTextSubmit}>Submit</button>
+  {:else}
+    {#await submitPromise}
+      <button type="submit" class="btn btn-primary rounded-full" disabled>Submitting...</button>
+    {:catch error}
+      <button type="submit" class="btn btn-primary rounded-full" on:click={handleTextSubmit}>Submit</button>
+    {/await}
+  {/if}
 </div>

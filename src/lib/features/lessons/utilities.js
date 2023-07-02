@@ -1,13 +1,14 @@
 import { cleanSentence } from '$lib/features/story/utilities'
+import dayjs from 'dayjs';
+import { flatten } from 'lodash';
 
-export function gradeCardTranslation({ card, transcription, confidence }) {
-    const { sentence } = card;
+export function gradeCard({ sentence, inputText, confidence = 1 }) {
     const {
       score,
       inputWordDetails,
       referenceWordDetails,
       totalScore
-    } = stringComparison({ inputString: transcription, referenceString: sentence });
+    } = stringComparison({ inputText, referenceString: sentence });
 
     const grade = Math.ceil(((score / totalScore) * confidence) * 5);
 
@@ -22,9 +23,9 @@ export function gradeCardTranslation({ card, transcription, confidence }) {
     };
 }
 
-function stringComparison({ inputString, referenceString }) {
-  const inputWords = cleanSentence(inputString).split(' ');
-  const referenceWords = cleanSentence(referenceString).split(' ');
+function stringComparison({ inputText, referenceString }) {
+  const inputWords = cleanSentence(inputText).trim().split(' ');
+  const referenceWords = cleanSentence(referenceString).trim().split(' ');
 
   const inputWordCount = wordCount(inputWords);
   const referenceWordCount = wordCount(referenceWords);
@@ -132,4 +133,39 @@ function wordDetails(inputWords, referenceWords) {
   });
 
   return { inputWordDetails: inputWordDetailsArr, referenceWordDetails: referenceWordDetailsArr };
+}
+
+function isReviewDue({ review }) {
+  const ThreePMTommorow = dayjs().add(1, 'day').startOf('day').add(3, 'hour');
+  debugger;
+  return dayjs(review.due_date).isBefore(ThreePMTommorow)
+}
+
+export function getSidesFromReviews({ reviews }) {
+  const sidesMap = {
+    SPEAK: [
+      {type: `ReadListen`},
+      {type: `ReadListenGraded`},
+    ],
+    WRITE: [
+      {type: `ReadTranslate`},
+      {type: `ReadTranslateGraded`},
+    ],
+  }
+
+  if (!reviews.length) {
+    return flatten(Object.values(sidesMap));
+  }
+
+  const sides = reviews.reduce((acc, review) => {
+    debugger
+    if (!isReviewDue({ review })) {
+      return acc;
+    }
+    const { type } = review;
+    const sides = sidesMap[type];
+    return [...acc, ...sides];
+  }, []);
+
+  return sides;
 }

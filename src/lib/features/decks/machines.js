@@ -89,10 +89,10 @@ export const deckReviewMachine = createMachine(
           ]
         }
       }),
-      reviewCard: assign(({ context, event}) => {
-        return context
+      reviewCard: assign((context, event) => {
+        return context.reviewCard({ context, event })
       }),
-      reviewDeck: assign(({ context, event}) => {
+      reviewDeck: assign((context, event) => {
         return context
       }),
       increment: assign({
