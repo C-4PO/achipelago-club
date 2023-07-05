@@ -137,7 +137,6 @@ function wordDetails(inputWords, referenceWords) {
 
 function isReviewDue({ review }) {
   const ThreePMTommorow = dayjs().add(1, 'day').startOf('day').add(3, 'hour');
-  debugger;
   return dayjs(review.due_date).isBefore(ThreePMTommorow)
 }
 
@@ -158,7 +157,6 @@ export function getSidesFromReviews({ reviews }) {
   }
 
   const sides = reviews.reduce((acc, review) => {
-    debugger
     if (!isReviewDue({ review })) {
       return acc;
     }

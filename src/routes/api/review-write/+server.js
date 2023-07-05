@@ -8,7 +8,6 @@ import { updateCardReview } from "$lib/features/reviews/functions"
 export const POST = async ({ request, locals: { supabase, getSession }}) => {
   const session = await getSession()
   const { user } = session || {}
-  debugger
   try {
     if (!user) {
       console.error(`You must be logged in to create a story.`)
@@ -39,9 +38,9 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
 
     if (cardGradeError) {
       return new Response(JSON.stringify({ error: cardGradeError }), { status: 500 })
-    }
+    }    
 
-    const review =  card.reviews ? card.reviews.find(({ type }) => type === 'WRITE') : null
+    const review =  sentenceCard.reviews ? sentenceCard.reviews.find(({ type }) => type === 'WRITE') : null
     const { data: newReview } = reviewCard({ grade: cardGrade, review, type: 'WRITE' })
     const { data: updatedReview, error: updatedReviewError } = await updateCardReview(supabase, {
       review: newReview,
@@ -49,6 +48,8 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
       userId: user.id,
       type: 'WRITE',
     })
+
+    console.log(`cardGrade`, cardGrade, updatedReview.due_date)
 
     if (updatedReviewError) {
       return new Response(JSON.stringify({ error: updatedReviewError }), { status: 500 })

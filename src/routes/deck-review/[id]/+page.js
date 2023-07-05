@@ -29,7 +29,7 @@ export async function load({ params, parent }) {
   } = await buildConceptCards(supabase, {
     cards: deck.cards,
     deckId: params.id,
-    userId: user.id
+    userId: user.id,
   })
 
   deck.cards = cards

@@ -11,7 +11,7 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
 
   const { file: audioFile, audioType, cardId  } = Object.fromEntries(await request.formData())
 
-  debugger
+
 
   try {
     if (!user) {
@@ -63,6 +63,8 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
     if (updatedReviewError) {
       return new Response(JSON.stringify({ error: updatedReviewError }), { status: 500 })
     }
+
+    console.log(`cardGrade`, cardGrade)
 
     return new Response(JSON.stringify(
       { 

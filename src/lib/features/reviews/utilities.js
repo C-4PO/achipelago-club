@@ -2,11 +2,12 @@ import dayjs from 'dayjs';
 import { supermemo } from 'supermemo';
 
 export function reviewCard({ review, grade, type }) {
-  debugger
+  const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
+
   if (!review) {
     review = {
-      interval: 1,
-      repetition: 1,
+      interval: 0,
+      repetition: 0,
       efactor: 2.5,
     }
   }
@@ -18,7 +19,7 @@ export function reviewCard({ review, grade, type }) {
       interval,
       repetition,
       efactor,
-      due_date: dayjs(Date.now()).add(interval, 'hour'),
+      due_date: dayjs().add(interval * MILLISECONDS_IN_DAY).toDate(),
       last_reviewed: new Date(),
       type,
     }

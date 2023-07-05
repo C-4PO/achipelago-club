@@ -1,5 +1,6 @@
 // import { speechToText } from '$lib/features/text-to-speech/functions.js'
 
+import { getSidesFromReviews } from '$lib/features/lessons/utilities.js'
 
 
 // let getLessonCardData = async ({ card, sides }) => {
@@ -14,7 +15,7 @@
 // }
 
 
-export let generateLesson = async ({ sides,  deck} ) => {
+export let generateLesson = async ({ deck} ) => {
   const {
     id,
     title,
@@ -26,8 +27,8 @@ export let generateLesson = async ({ sides,  deck} ) => {
       cardId: card.id,
       stage: `read`,
       gradeWeight: 1,
-      sides,
-    })),
+      sides: getSidesFromReviews({ reviews: card.reviews })
+    })).filter(({ sides }) => sides.length > 0)
   ]
 
   console.log({ lesson })

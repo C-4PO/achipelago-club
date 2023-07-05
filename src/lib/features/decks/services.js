@@ -8,7 +8,6 @@ import { deckReviewMachine } from './machines.js'
 export const deckReviewService = ({
   lesson
 }) => {
-
   const fetchDrawPile = ({ context: { currentIndex, _cards , ...rest}, event }) => {
     return _cards.slice(currentIndex, lesson.length)
   }
@@ -17,15 +16,13 @@ export const deckReviewService = ({
   
   const performReview = ({ context,  event }) => {
     const reviews = Object.values(event.results).map(({ review }) => review)
-    const sides = getSidesFromReviews({ reviews })
-    debugger
+    const sides = getSidesFromReviews({ reviews })    
     return Promise.resolve({
       reviews,
       sides,
     })
   }
   const reviewCard = ({ context, event }) => {
-    debugger
     return context
   }
   const performSummerize = ({ context, event }) => Promise.resolve()
