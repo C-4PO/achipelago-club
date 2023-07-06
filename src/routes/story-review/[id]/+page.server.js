@@ -46,15 +46,7 @@ export async function load({ params, locals: { supabase }, ...rest }) {
 
   // TODO: generate lession function given sides 
 
-  const lesson = await generateLesson({
-    sides: [
-      {type: `ReadListen`},
-      {type: `ReadListenGraded`},
-      {type: `ReadTranslate`},
-      {type: `ReadTranslateGraded`},
-    ],
-    deck: storyDeck,
-  })
+  const lesson = await generateLesson({ deck: storyDeck })
 
   return {
     title,

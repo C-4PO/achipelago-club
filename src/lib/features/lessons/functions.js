@@ -31,7 +31,7 @@ export let generateLesson = async ({ deck} ) => {
     })).filter(({ sides }) => sides.length > 0)
   ]
 
-  console.log({ lesson })
+  console.dir({ lesson }, { depth: null })
 
   return lesson
 }

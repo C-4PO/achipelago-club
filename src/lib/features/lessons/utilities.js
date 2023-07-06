@@ -152,18 +152,13 @@ export function getSidesFromReviews({ reviews }) {
     ],
   }
 
-  if (!reviews.length) {
-    return flatten(Object.values(sidesMap));
-  }
-
-  const sides = reviews.reduce((acc, review) => {
-    if (!isReviewDue({ review })) {
-      return acc;
+  let sides = []
+  for (const reviewType of Object.keys(sidesMap)) {
+    const review = reviews.find(({ type }) => type === reviewType)
+    if (!review || isReviewDue({ review })) {
+      sides = [...sides, ...sidesMap[reviewType]]
     }
-    const { type } = review;
-    const sides = sidesMap[type];
-    return [...acc, ...sides];
-  }, []);
+  }
 
   return sides;
 }

@@ -70,7 +70,7 @@
       {#if grade >= 4}
         <Icon icon="mingcute:check-fill" class="inline-block text-white text-lg" width="70" height="70" />
         <h3 class="text-white text-2xl font-bold">Great job!</h3>
-      {:else if grade >= 2}
+      {:else if grade >= 3}
         <Icon icon="ph:smiley-meh-bold" class="inline-block text-white text-lg" width="70" height="70" />
         <h3 class="text-white text-2xl font-bold">Not bad!</h3>
       {:else}
@@ -89,6 +89,10 @@
       <p class="flex justify-center flex-wrap">
         <ReviewerWords words={referenceWordDetails} colorIndices={referenceColorIndices} colorPriorities={colorPriorities} />
       </p>
+    </div>
+    <div class="rounded-3xl bg-white p-3 text-black">
+      <h3 class="text-xl font-bold text-center pb-1">Grade</h3>
+      <p class="text-3xl flex justify-center">{grade}</p>
     </div>
   </div>
   <button
