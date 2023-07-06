@@ -105,8 +105,6 @@ export const flashCardMachine = createMachine(
         const drawPile = context.fetchDrawPile({ context, event }); // apply the algorithm
         const card = drawPile[0]; // get the next card to review
 
-        console.log({ card })
-
         return {
           ...context,
           card,

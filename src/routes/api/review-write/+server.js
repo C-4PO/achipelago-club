@@ -49,8 +49,6 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
       type: 'WRITE',
     })
 
-    console.log(`cardGrade`, cardGrade, updatedReview.due_date)
-
     if (updatedReviewError) {
       return new Response(JSON.stringify({ error: updatedReviewError }), { status: 500 })
     }

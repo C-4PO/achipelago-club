@@ -64,7 +64,6 @@ export function reviewCard({ card, review }) {
 
   if (reviewer) {
     const ratingValue = reviewer({ card, review });
-    console.log('ratingValue', ratingValue)
     const { interval, repetition, efactor } = supermemo(card.review, ratingValue);
     
     return {

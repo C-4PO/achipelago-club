@@ -64,8 +64,6 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
       return new Response(JSON.stringify({ error: updatedReviewError }), { status: 500 })
     }
 
-    console.log(`cardGrade`, cardGrade)
-
     return new Response(JSON.stringify(
       { 
         review: updatedReview,

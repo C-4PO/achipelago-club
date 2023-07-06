@@ -22,7 +22,6 @@ export const normalizeReview = ({ review }) => {
 }
 
 export const summerizeReviews = ({ reviews = [] }) => {
-  console.log(`reviews`, reviews)
   if (reviews.length === 0) {
     return {
       totalCards: 0,
