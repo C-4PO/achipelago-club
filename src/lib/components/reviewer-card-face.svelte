@@ -32,9 +32,9 @@
   {#key key} 
     <CardReviewListenGraded card={card} on:next={next} result={shared[`WRITE`]} />
   {/key}
-{:else if type === `ConceptReview`}
+{:else if type === `stageSummary`}
   {#key key} 
-    <h1 class="text-white">Concept Review</h1>
+    <h1 class="text-white">Stage finished!</h1>
   {/key}
 {/if}
 

@@ -4,53 +4,61 @@ import { normalizeStoryDeck } from '$lib/features/decks/normalizers';
 import { generateLesson } from '$lib/features/lessons/functions';
 
 export async function load({ params, locals: { supabase }, ...rest }) {
-  // const { user } = await getSession()
 
-  const {
-    id: deckId,
-  }  = params
+  try {
+    // const { user } = await getSession()
 
-  // if (!user) {
-  //   throw redirect(303, '/')
-  // }
+    const {
+      id: deckId,
+    }  = params
 
-  const { data: dbStoryDeck, error: dbStoryDeckError } = await getStoryDeck(supabase, {
-    deckId,
-  })
+    // if (!user) {
+    //   throw redirect(303, '/')
+    // }
 
-  if (dbStoryDeckError) {
-    return {
-      error: dbStoryDeckError,
-      type: `Storty Deck Fetch Error`
+    const { data: dbStoryDeck, error: dbStoryDeckError } = await getStoryDeck(supabase, {
+      deckId,
+    })
+
+    if (dbStoryDeckError) {
+      return {
+        error: dbStoryDeckError,
+        type: `Storty Deck Fetch Error`
+      }
     }
-  }
 
-  const { data: storyDeck, error: storyDeckError } = normalizeStoryDeck({
-    dbStoryDeck,
-  })
+    const { data: storyDeck, error: storyDeckError } = normalizeStoryDeck({
+      dbStoryDeck,
+    })
 
-  if (storyDeckError) {
-    return {
-      error: storyDeckError,
-      type: `Story Deck Parse Error`,
+    if (storyDeckError) {
+      return {
+        error: storyDeckError,
+        type: `Story Deck Parse Error`,
+      }
     }
-  }
 
-  // apply text to speech
+    // apply text to speech
 
-  const {
-    id,
-    title,
-    cards
-  } = storyDeck;
+    const {
+      id,
+      title,
+      cards
+    } = storyDeck;
 
-  // TODO: generate lession function given sides 
+    // TODO: generate lession function given sides 
 
-  const lesson = await generateLesson({ deck: storyDeck })
+    const lesson = await generateLesson({ deck: storyDeck })
 
-  return {
-    title,
-    lesson,
-    cards,
+    return {
+      title,
+      lesson,
+      cards,
+    }
+  } catch (e) {
+    debugger
+    return {
+      error: e
+    }
   }
 }

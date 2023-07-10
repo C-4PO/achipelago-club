@@ -60,7 +60,9 @@
   }
 
   const next = (response) => {
-    dispatch('next')
+    dispatch('next', {
+      action: `next`
+    })
   }
 </script>
 

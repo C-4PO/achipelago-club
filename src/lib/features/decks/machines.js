@@ -5,6 +5,7 @@ export const deckReviewMachine = createMachine(
     id: `deck-review`,
     initial: 'intro',
     context: {
+      _cards: [],
       currentIndex: 0,
       currentCard: null,
       tableCards: [{key: 1}, { key: 2}],
@@ -16,6 +17,7 @@ export const deckReviewMachine = createMachine(
       performReview: ({ context,  event }) => Promise.resolve(),
       performSummerize: ({ context, event }) => Promise.resolve(),
       calculateFinished: ({ context, event }) => false,
+      performStageGenerate: ({ context, event }) => Promise.resolve(),
     },
     states: {
       intro: {
@@ -44,13 +46,35 @@ export const deckReviewMachine = createMachine(
           src: (context, event) => context.performReview({ context, event }),
           onDone: [
             {
-              target: 'finalizeDeck',
+              target: 'evalateStage',
               cond: 'isFinished',
               actions: ['reviewCard']
             },
             {
               target: 'review',
               actions: ['reviewCard', 'increment']
+            }
+          ]
+        }
+      },
+      evalateStage: {
+        entry: ['drawStage'],
+        on: {
+          REVIEWED: {
+            target: 'generateStage',
+          },
+          FINISH: {
+            target: 'finalizeDeck',
+          }
+        }
+      },
+      generateStage: {
+        invoke: {
+          src: (context, event) => context.performStageGenerate({ context, event }),
+          onDone: [
+            {
+              target: 'review',
+              actions: 'reviewDeck'
             }
           ]
         }
@@ -80,6 +104,7 @@ export const deckReviewMachine = createMachine(
   
         return {
           ...context,
+          _cards: drawPile,
           lastCard,
           currentCard,
           tableCards: [
@@ -87,6 +112,35 @@ export const deckReviewMachine = createMachine(
             { key: context.currentIndex + 1, ...currentCard, initialized: true},
             { key: context.currentIndex + 2 }
           ]
+        }
+      }),
+      drawStage: assign((context, event) => {
+        debugger
+        const lastCard = context.currentCard
+        const currentCard = {
+          card: null,
+          sides: [
+            {
+              type: `stageSummary`
+            }
+          ]
+        }
+        return {
+          ...context,
+          lastCard,
+          currentCard,
+          tableCards: [
+            ...context.tableCards.slice(0, context.currentIndex),
+            { key: context.currentIndex + 1, ...currentCard, initialized: true},
+            { key: context.currentIndex + 2 }
+          ]
+        }
+      }),
+      loadStage: assign((context, event) => {
+        const _cards = event.data.cards
+        return {
+          ...context,
+          _cards,
         }
       }),
       reviewCard: assign((context, event) => {

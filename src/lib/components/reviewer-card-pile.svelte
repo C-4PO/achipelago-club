@@ -8,23 +8,31 @@
 
   const dispatch = createEventDispatcher()
   let shared = {}
+  let finalAction = `next`
 
   const onFinish = async () => {
     dispatch('next', {
       results: shared,
+      action: finalAction,
     })
   }
 
   const {
-    isFlipped, front, back, step, send, onNext
+    isFlipped,
+    front,
+    back,
+    step,
+    send,
+    onNext,
   } = cardReviewService({ pile, onFinish })
 
-  const next = ({ detail }) => {
+  const next = ({ detail: { action = `next`, ...results } = {} }) => {
     shared = {
       ...shared,
-      ...detail
+      ...results
     }
-    onNext({ shared })
+    finalAction = action
+    onNext({ shared, action: action || `next` })
   }
 </script>
 

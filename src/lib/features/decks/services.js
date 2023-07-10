@@ -27,7 +27,12 @@ export const deckReviewService = ({
   }
   const performSummerize = ({ context, event }) => Promise.resolve()
   const calculateFinished = ({ context, event}) => {
-    return false
+    console.log(context._cards.length)
+    if (context._cards.length > 0) {
+      return false
+    }
+    debugger
+    return true
   }
 
   const { state, send, service } = useMachine(deckReviewMachine, {
@@ -63,7 +68,17 @@ export const deckReviewService = ({
   )
 
   const onNext = ({ detail }) => {
-    send(`REVIEWED`, detail )
+
+    if (detail.action === 'finish') {
+      debugger
+      send(`FINISH`, detail)
+    } else if (detail.action === `next`) {
+      send(`REVIEWED`, detail )
+    }
+  }
+
+  const onFinish = () => {
+    send(`FINISH`)
   }
 
   return {
@@ -73,6 +88,7 @@ export const deckReviewService = ({
     context,
     step,
     send,
+    onFinish,
     service,
   }
 }

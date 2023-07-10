@@ -17,7 +17,7 @@
     cards,
   } = data
 
-  const isLeadingAudio = true
+  const isLeadingAudio = false
 
   lesson = lesson.map(lesson => {
       const card = {
@@ -49,6 +49,8 @@
         });
         isLoading = false;
       });
+    } else {
+      isLoading = false;
     }
   });
 

@@ -142,10 +142,10 @@ function isReviewDue({ review }) {
 
 export function getSidesFromReviews({ reviews }) {
   const sidesMap = {
-    SPEAK: [
-      {type: `ReadListen`},
-      {type: `ReadListenGraded`},
-    ],
+    // SPEAK: [
+    //   {type: `ReadListen`},
+    //   {type: `ReadListenGraded`},
+    // ],
     WRITE: [
       {type: `ReadTranslate`},
       {type: `ReadTranslateGraded`},
