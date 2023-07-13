@@ -50,6 +50,7 @@
       cardId: card.id
     })
     .then((response) => {
+      console.log(response)
       next(response)
     })
     .catch((error) => {

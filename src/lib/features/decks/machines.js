@@ -6,10 +6,10 @@ export const deckReviewMachine = createMachine(
     initial: 'intro',
     context: {
       _cards: [],
+      drawPile: [],
       currentIndex: 0,
       currentCard: null,
       tableCards: [{key: 1}, { key: 2}],
-      drawPile: [],
       lastCard: null,
       fetchDrawPile: ({ context, event }) => [],
       reviewCard: ({ context, event }) => context,
@@ -101,10 +101,9 @@ export const deckReviewMachine = createMachine(
         const lastCard = context.currentCard
         const drawPile = context.fetchDrawPile({ context, event })
         const currentCard = drawPile[0]
-  
+        console.log(`Current CARD`, currentCard)
         return {
           ...context,
-          _cards: drawPile,
           lastCard,
           currentCard,
           tableCards: [
@@ -115,10 +114,9 @@ export const deckReviewMachine = createMachine(
         }
       }),
       drawStage: assign((context, event) => {
-        debugger
         const lastCard = context.currentCard
         const currentCard = {
-          card: null,
+          card: {},
           sides: [
             {
               type: `stageSummary`

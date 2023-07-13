@@ -9,7 +9,8 @@ export const deckReviewService = ({
   lesson
 }) => {
   const fetchDrawPile = ({ context: { currentIndex, _cards , ...rest}, event }) => {
-    return _cards.slice(currentIndex, lesson.length)
+    debugger
+    return _cards.slice(currentIndex, _cards.length)
   }
 
   const reviewDeck = ({ context, event }) => context
@@ -27,11 +28,11 @@ export const deckReviewService = ({
   }
   const performSummerize = ({ context, event }) => Promise.resolve()
   const calculateFinished = ({ context, event}) => {
-    console.log(context._cards.length)
-    if (context._cards.length > 0) {
+    console.log({ context })
+    debugger
+    if (context._cards.length - 1 !== context.currentIndex) {
       return false
     }
-    debugger
     return true
   }
 
@@ -68,11 +69,11 @@ export const deckReviewService = ({
   )
 
   const onNext = ({ detail }) => {
-
     if (detail.action === 'finish') {
-      debugger
+      console.log('FINISH', detail)
       send(`FINISH`, detail)
     } else if (detail.action === `next`) {
+      console.log('REVIEWED', detail)
       send(`REVIEWED`, detail )
     }
   }
