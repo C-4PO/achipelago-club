@@ -78,7 +78,7 @@
     </div>
     <div slot="back" class="flex flex-col gap-5 h-full w-full rounded-[50px] bg-secondary">
       {#if slide.initialized && show}
-        <ReviewerCardPile pile={slide} on:next={onNext}></ReviewerCardPile>
+        <ReviewerCardPile pile={slide.pile} on:next={onNext}></ReviewerCardPile>
       {/if}
     </div>
   </ReviewerCard>

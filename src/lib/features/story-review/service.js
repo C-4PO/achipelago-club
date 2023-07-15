@@ -7,7 +7,7 @@ export const reviewService = (initialState) => {
   const { state, send, service } = useMachine(flashCardMachine, {
     context: {
       ...initialState,
-      currentCardIndex: 0,
+      currentPileIndex: 0,
     }
   });
 

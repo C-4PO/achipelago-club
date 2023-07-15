@@ -8,42 +8,44 @@ import { deckReviewMachine } from './machines.js'
 export const deckReviewService = ({
   lesson
 }) => {
-  const fetchDrawPile = ({ context: { currentIndex, _cards , ...rest}, event }) => {
-    debugger
-    return _cards.slice(currentIndex, _cards.length)
-  }
 
   const reviewDeck = ({ context, event }) => context
-  
-  const performReview = ({ context,  event }) => {
-    const reviews = Object.values(event.results).map(({ review }) => review)
-    const sides = getSidesFromReviews({ reviews })    
-    return Promise.resolve({
-      reviews,
-      sides,
-    })
-  }
+
   const reviewCard = ({ context, event }) => {
-    return context
-  }
-  const performSummerize = ({ context, event }) => Promise.resolve()
-  const calculateFinished = ({ context, event}) => {
-    console.log({ context })
-    debugger
-    if (context._cards.length - 1 !== context.currentIndex) {
-      return false
+    const reviews = Object.values(event.results).map(({ review }) => review)
+    context.currentPile.card.reviews = reviews
+    context.currentPile.sides = getSidesFromReviews({ reviews })
+    let drawPile = context.drawPile
+
+    if (context.stage === `review`) {
+      drawPile = drawPile.filter(({ reviews }) => reviews.length > 0)
+     /*
+      .sort((a, b) => {
+        const aRating = a.reviews.reduce((acc, { rating }) => acc + rating, 0) / a.reviews.length
+        const bRating = b.reviews.reduce((acc, { rating }) => acc + rating, 0) / b.reviews.length
+        return bRating - aRating
+      }
+      */
+    } else if (context.stage === `read`) {
+      drawPile.shift()
     }
-    return true
+
+    return {
+      ...context,
+      drawPile,
+    }
+  }
+
+  const calculateFinished = ({ context, event}) => {
+    return context.drawPile.length === 0
   }
 
   const { state, send, service } = useMachine(deckReviewMachine, {
     context: {
-      _cards: lesson,
-      fetchDrawPile,
+      stage: 'read',
+      drawPile: lesson,
       reviewCard,
       reviewDeck,
-      performReview,
-      performSummerize,
       calculateFinished,
     }
   })

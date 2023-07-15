@@ -25,7 +25,7 @@ export const flashCardMachine = createMachine(
     id: 'flashcard',
     initial: states.intro,
     context: {
-      currentCardIndex: 0,
+      currentPileIndex: 0,
       cards: [],
       reviewItems: [],
     },
@@ -73,10 +73,10 @@ export const flashCardMachine = createMachine(
         console.log('Review complete:', context.reviewItems);
       },
       nextCard: assign({
-        currentCardIndex: (context) => context.currentCardIndex + 1,
+        currentPileIndex: (context) => context.currentPileIndex + 1,
       }),
       indexCard: (context) => {
-        const card = context.cards[context.currentCardIndex];
+        const card = context.cards[context.currentPileIndex];
         console.log('Reviewing card:', card);
       },
       setReviewItem: assign({
@@ -87,7 +87,7 @@ export const flashCardMachine = createMachine(
     },
     guards: {
       lastCard: (context) => {
-        return context.currentCardIndex === context.cards.length - 1;
+        return context.currentPileIndex === context.cards.length - 1;
       },
     },
   }
