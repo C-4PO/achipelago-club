@@ -1,18 +1,23 @@
 import { useMachine } from '$lib/features/utilities.js';
 import { stateIndex } from '$lib/features/utilities.js';
 import { getSidesFromReviews } from '$lib/features/lessons/utilities.js';
+import { loadStage } from '$lib/features/lessons/api.js';
 import { derived } from 'svelte/store';
+import { goto } from '$app/navigation';
 
 import { deckReviewMachine } from './machines.js'
 
 export const deckReviewService = ({
-  lesson
+  drawPile,
+  stage,
+  deckId,
 }) => {
 
   const reviewDeck = ({ context, event }) => context
 
   const reviewCard = ({ context, event }) => {
     const reviews = Object.values(event.results).map(({ review }) => review)
+    // Editiong pointer to effect all instances of the pile
     context.currentPile.card.reviews = reviews
     context.currentPile.sides = getSidesFromReviews({ reviews })
     let drawPile = context.drawPile
@@ -36,17 +41,29 @@ export const deckReviewService = ({
     }
   }
 
+  const performStageGenerate = ({ context, event }) => {
+    return loadStage({
+      stage: context.stage,
+      lessonType: `story`,
+      deckId,
+    })
+  }
+
   const calculateFinished = ({ context, event}) => {
     return context.drawPile.length === 0
   }
 
+  const finish = () => goto(`/story-list`)
+
   const { state, send, service } = useMachine(deckReviewMachine, {
     context: {
-      stage: 'read',
-      drawPile: lesson,
+      stage,
+      drawPile,
       reviewCard,
       reviewDeck,
       calculateFinished,
+      finish,
+      performStageGenerate
     }
   })
 
@@ -71,13 +88,7 @@ export const deckReviewService = ({
   )
 
   const onNext = ({ detail }) => {
-    if (detail.action === 'finish') {
-      console.log('FINISH', detail)
-      send(`FINISH`, detail)
-    } else if (detail.action === `next`) {
-      console.log('REVIEWED', detail)
-      send(`REVIEWED`, detail )
-    }
+    send(`REVIEWED`, detail )
   }
 
   const onFinish = () => {

@@ -13,13 +13,15 @@
 
   let {
     title,
-    lesson,
+    drawPile,
+    stage,
     cards,
+    deckId,
   } = data
 
   const isLeadingAudio = false
 
-  lesson = lesson.map(lesson => {
+  drawPile = drawPile.map(lesson => {
       const card = {
         ...cards.find(card => card.id === lesson.cardId),
       }
@@ -54,8 +56,10 @@
     }
   });
 
-  const { context, step, send, slides, currentIndex, onNext } = deckReviewService({
-    lesson,  
+  const { context, step, send, slides, currentIndex, onNext, onFinish } = deckReviewService({
+    drawPile,
+    stage,
+    deckId,
   })
 </script>
 
@@ -78,7 +82,7 @@
     </div>
     <div slot="back" class="flex flex-col gap-5 h-full w-full rounded-[50px] bg-secondary">
       {#if slide.initialized && show}
-        <ReviewerCardPile pile={slide.pile} on:next={onNext}></ReviewerCardPile>
+        <ReviewerCardPile pile={slide.pile} on:next={onNext} on:finish={onFinish}></ReviewerCardPile>
       {/if}
     </div>
   </ReviewerCard>

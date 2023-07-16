@@ -37,3 +37,18 @@ export const gradeCardWrite = async ({ text, cardId }) => {
   })
 }
 
+export const loadStage = async ({ deckId, stage }) => {
+  return fetch(`/api/get-stage?deckId=${deckId}&stage=${stage}`, {
+    method: `GET`,
+    headers: {
+      'Content-Type': `application/json`
+    }
+  }).then(async (response) => {
+    if (response.ok) {
+      const json = await response.json();
+      return json;
+    }
+    throw new Error(response.statusText);
+  })
+}
+

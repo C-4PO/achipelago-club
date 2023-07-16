@@ -5,18 +5,14 @@
 
   import { createEventDispatcher } from 'svelte'
 
-  const dispatch = createEventDispatcher()e
+  const dispatch = createEventDispatcher()
 
   function next() {
-    dispatch('next', {
-      action: `next`
-    })
+    dispatch('next')
   }
 
-  function end() {
-    dispatch('next', {
-      action: `finish`
-    })
+  function finish() {
+    dispatch('finish')
   }
 </script>
 
@@ -27,5 +23,5 @@
     </p>
   </div>
   <button type="submit" class="btn btn-primary rounded-full" on:click={next}>Continue</button>
-  <button type="submit" class="btn btn-primary rounded-full" on:click={next}>Finish</button>
+  <button type="submit" class="btn btn-primary rounded-full" on:click={finish}>Finish</button>
 </div>

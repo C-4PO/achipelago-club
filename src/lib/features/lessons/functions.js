@@ -2,14 +2,14 @@
 
 import { getSidesFromReviews } from '$lib/features/lessons/utilities.js'
 
-export let generateLesson = async ({ deck} ) => {
+export let generateLesson = async ({ deck, prevStage, lessonType }) => {
   const {
     id,
     title,
     cards
   } = deck;
 
-  const lesson = [
+  const drawPile = [
     ...cards.map((card) => ({
       cardId: card.id,
       stage: `read`,
@@ -18,5 +18,17 @@ export let generateLesson = async ({ deck} ) => {
     })).filter(({ sides }) => sides.length > 0)
   ]
 
-  return lesson
+  let stage
+  if (prevStage === `read`) {
+    stage = `review`
+  } if (prevStage === `review`) {
+    stage = `review`
+  } else {
+    stage = `read`
+  }
+
+  return {
+    drawPile,
+    stage,
+  }
 }

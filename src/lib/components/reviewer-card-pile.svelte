@@ -26,13 +26,16 @@
     onNext,
   } = cardReviewService({ pile, onFinish })
 
-  const next = ({ detail: { action = `next`, ...results } = {} }) => {
+  const next = ({ detail }) => {
     shared = {
       ...shared,
-      ...results
+      ...detail
     }
-    finalAction = action
-    onNext({ shared, action: action || `next` })
+    onNext({ shared })
+  }
+
+  const finish = ({ detail }) => {
+    dispatch('finish', detail)
   }
 </script>
 
@@ -46,6 +49,7 @@
           bind:type={$front.type}
           bind:shared={shared}
           on:next={next}
+          on:finish={finish}
         />
       {/if}
     </div>
@@ -57,6 +61,7 @@
           bind:type={$back.type}
           bind:shared={shared}
           on:next={next}
+          on:finish={finish}
         />
       {/if}
     </div>

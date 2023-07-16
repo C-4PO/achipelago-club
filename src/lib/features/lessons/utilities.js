@@ -135,7 +135,7 @@ function wordDetails(inputWords, referenceWords) {
   return { inputWordDetails: inputWordDetailsArr, referenceWordDetails: referenceWordDetailsArr };
 }
 
-function isReviewDue({ review }) {
+function isReviewDue({ review, state, lessonType }) {
   const ThreePMTommorow = dayjs().add(1, 'day').startOf('day').add(3, 'hour');
   return dayjs(review.due_date).isBefore(ThreePMTommorow)
 }

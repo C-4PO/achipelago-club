@@ -16,6 +16,7 @@ export const deckReviewMachine = createMachine(
       performSummerize: ({ context, event }) => Promise.resolve(),
       calculateFinished: ({ context, event }) => false,
       performStageGenerate: ({ context, event }) => Promise.resolve(),
+      finish: () => {}
     },
     states: {
       intro: {
@@ -87,7 +88,7 @@ export const deckReviewMachine = createMachine(
         }
       },
       summary: {
-        entry: ['test'],
+        entry: ['finish'],
         type: 'final'
       }
     },
@@ -146,8 +147,8 @@ export const deckReviewMachine = createMachine(
           return context.currentIndex + 1
         }
       }),
-      test: (context, event) => {
-        return context
+      finish: (context, event) => {
+        context.finish()
       }
     },
     guards: {
