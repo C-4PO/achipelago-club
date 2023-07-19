@@ -11,6 +11,7 @@ export const deckReviewService = ({
   drawPile,
   stage,
   deckId,
+  cards,
 }) => {
 
   const reviewDeck = ({ context, event }) => context
@@ -57,13 +58,14 @@ export const deckReviewService = ({
 
   const { state, send, service } = useMachine(deckReviewMachine, {
     context: {
+      cards,
       stage,
       drawPile,
       reviewCard,
       reviewDeck,
       calculateFinished,
       finish,
-      performStageGenerate
+      performStageGenerate,
     }
   })
 

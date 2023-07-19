@@ -4,9 +4,11 @@ export const deckReviewMachine = createMachine(
   {
     id: `deck-review`,
     initial: 'intro',
+    predictableActionArguments: true,
     context: {
       stage: 'read',
       drawPile: [],
+      cards: [],
       currentIndex: 0,
       currentPile: null,
       tableCards: [{key: 1}, { key: 2}],
@@ -16,7 +18,7 @@ export const deckReviewMachine = createMachine(
       performSummerize: ({ context, event }) => Promise.resolve(),
       calculateFinished: ({ context, event }) => false,
       performStageGenerate: ({ context, event }) => Promise.resolve(),
-      finish: () => {}
+      finish: () => {},
     },
     states: {
       intro: {
@@ -46,7 +48,7 @@ export const deckReviewMachine = createMachine(
       finishReview: {
         always: [
           {
-            target: 'evalateStage',
+            target: 'generateStage',
             cond: 'isFinished',
           },
           {
@@ -58,7 +60,8 @@ export const deckReviewMachine = createMachine(
         entry: ['drawStage'],
         on: {
           REVIEWED: {
-            target: 'generateStage',
+            target: 'review',
+            actions: ['increment']
           },
           FINISH: {
             target: 'finalizeDeck',
@@ -70,8 +73,8 @@ export const deckReviewMachine = createMachine(
           src: (context, event) => context.performStageGenerate({ context, event }),
           onDone: [
             {
-              target: 'review',
-              actions: 'loadStage'
+              target: 'evalateStage',
+              actions: ['loadStage']
             }
           ]
         }
@@ -130,7 +133,12 @@ export const deckReviewMachine = createMachine(
         }
       }),
       loadStage: assign((context, event) => {
-        const drawPile = event.data.drawPile
+        const drawPile = event.data.drawPile.map((pile) => {
+          return {
+            ...pile,
+            card: context.cards.find((card) => card.id === pile.cardId)
+          }
+        })
         return {
           ...context,
           drawPile,

@@ -60,6 +60,7 @@
     drawPile,
     stage,
     deckId,
+    cards,
   })
 </script>
 
