@@ -59,14 +59,24 @@
     }
   }
 
+  function handleKey(event) {
+    if (event.key === 'Enter') {
+      next()
+    }
+  }
+
   const next = (response) => {
     dispatch('next', {
       action: `next`
     })
   }
+
+  function init(el){
+    el.focus()
+  }
 </script>
 
-<div class="flex flex-col h-full gap-5 rounded-3xl justify-between p-5" style="background-color: {backgroundColor}">
+<div class="flex flex-col h-full gap-5 rounded-3xl justify-between p-5" on:keydown={handleKey} style="background-color: {backgroundColor}">
   <div class="flex flex-col h-full gap-5 overflow-auto rounded-3xl">
     <header class="flex justify-center items-center flex-col">
       {#if grade >= 4}
@@ -100,6 +110,7 @@
   <button
     class="btn-full btn-primary btn-md rounded-3xl "
     on:click={next}
+    use:init
   >
     Next
   </button>

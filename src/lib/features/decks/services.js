@@ -1,6 +1,6 @@
 import { useMachine } from '$lib/features/utilities.js';
 import { stateIndex } from '$lib/features/utilities.js';
-import { getSidesFromReviews } from '$lib/features/lessons/utilities.js';
+import { getSidesForRead } from '$lib/features/lessons/utilities.js';
 import { loadStage } from '$lib/features/lessons/api.js';
 import { derived } from 'svelte/store';
 import { goto } from '$app/navigation';
@@ -20,7 +20,7 @@ export const deckReviewService = ({
     const reviews = Object.values(event.results).map(({ review }) => review)
     // Editiong pointer to effect all instances of the pile
     context.currentPile.card.reviews = reviews
-    context.currentPile.sides = getSidesFromReviews({ reviews })
+    context.currentPile.sides = getSidesForRead({ reviews })
     let drawPile = context.drawPile
 
     if (context.stage === `review`) {
@@ -79,6 +79,13 @@ export const deckReviewService = ({
     $state => $state.context
   );
 
+  const info = derived(
+    state,
+    $state => ({
+      hasRemainingCards: $state.context.drawPile.length > 0
+    })
+  );
+
   const slides = derived(
     state,
     $state => $state.context.tableCards,
@@ -106,5 +113,6 @@ export const deckReviewService = ({
     send,
     onFinish,
     service,
+    info,
   }
 }

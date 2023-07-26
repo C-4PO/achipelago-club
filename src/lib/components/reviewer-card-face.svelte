@@ -11,6 +11,7 @@
   export let type
   export let card
   export let shared
+  export let info
 
   const next = ({ detail }) => {
     dispatch(`next`, detail)
@@ -23,23 +24,23 @@
 
 {#if type === `ReadListen`}
   {#key key} 
-    <CardReviewListen card={card} on:next={next} />
+    <CardReviewListen card={card} on:next={next} info={info} />
   {/key}
 {:else if type === `ReadTranslate`}
   {#key key} 
-    <CardSentenceTranslate card={card} on:next={next} />
+    <CardSentenceTranslate card={card} on:next={next} info={info} />
   {/key}
 {:else if type === `ReadListenGraded`}
   {#key key} 
-    <CardReviewListenGraded card={card} on:next={next} result={shared[`SPEAK`]} />
+    <CardReviewListenGraded card={card} on:next={next} result={shared[`SPEAK`]} info={info} />
   {/key}
 {:else if type === `ReadTranslateGraded`}
   {#key key} 
-    <CardReviewListenGraded card={card} on:next={next} result={shared[`WRITE`]} />
+    <CardReviewListenGraded card={card} on:next={next} result={shared[`WRITE`]} info={info} />
   {/key}
 {:else if type === `stageSummary`}
   {#key key}
-    <CardStageFinished on:next={next} on:finish={finish} />
+    <CardStageFinished on:next={next} on:finish={finish} info={info}/>
   {/key}
 {/if}
 

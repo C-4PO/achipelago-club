@@ -56,7 +56,16 @@
     }
   });
 
-  const { context, step, send, slides, currentIndex, onNext, onFinish } = deckReviewService({
+  const {
+    context,
+    info,
+    step,
+    send,
+    slides,
+    currentIndex,
+    onNext,
+    onFinish
+  } = deckReviewService({
     drawPile,
     stage,
     deckId,
@@ -83,7 +92,7 @@
     </div>
     <div slot="back" class="flex flex-col gap-5 h-full w-full rounded-[50px] bg-secondary">
       {#if slide.initialized && show}
-        <ReviewerCardPile pile={slide.pile} on:next={onNext} on:finish={onFinish}></ReviewerCardPile>
+        <ReviewerCardPile pile={slide.pile} info={info} on:next={onNext} on:finish={onFinish}></ReviewerCardPile>
       {/if}
     </div>
   </ReviewerCard>

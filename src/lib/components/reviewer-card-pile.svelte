@@ -5,6 +5,7 @@
   import { createEventDispatcher } from 'svelte'
 
   export let pile
+  export let info
 
   const dispatch = createEventDispatcher()
   let shared = {}
@@ -48,6 +49,7 @@
           bind:card={pile.card}
           bind:type={$front.type}
           bind:shared={shared}
+          info={info}
           on:next={next}
           on:finish={finish}
         />
@@ -60,6 +62,7 @@
           bind:card={pile.card}
           bind:type={$back.type}
           bind:shared={shared}
+          info={info}
           on:next={next}
           on:finish={finish}
         />

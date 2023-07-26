@@ -135,12 +135,12 @@ function wordDetails(inputWords, referenceWords) {
   return { inputWordDetails: inputWordDetailsArr, referenceWordDetails: referenceWordDetailsArr };
 }
 
-function isReviewDue({ review, state, lessonType }) {
+export function isReviewDue({ review }) {
   const ThreePMTommorow = dayjs().add(1, 'day').startOf('day').add(3, 'hour');
   return dayjs(review.due_date).isBefore(ThreePMTommorow)
 }
 
-export function getSidesFromReviews({ reviews }) {
+export function getSidesForRead({ reviews }) {
   const sidesMap = {
     // SPEAK: [
     //   {type: `ReadListen`},
@@ -162,3 +162,30 @@ export function getSidesFromReviews({ reviews }) {
 
   return sides;
 }
+
+export function getSectionsForReview({ reviews }) {
+  const sidesMap = {
+    // SPEAK: [
+    //   {type: `ReadListen`},
+    //   {type: `ReadListenGraded`},
+    // ],
+    WRITE: [
+      {type: `ReadTranslate`},
+      {type: `ReadTranslateGraded`},
+    ],
+  }
+
+  let sections = {}
+  for (const reviewType of Object.keys(sidesMap)) {
+    const review = reviews.find(({ type }) => type === reviewType)
+    if (!review || isReviewDue({ review })) {
+      sections = {...sections, [reviewType]: {
+        sides: sidesMap[reviewType],
+        review,
+      }}
+    }
+  }
+
+  return sections;
+}
+

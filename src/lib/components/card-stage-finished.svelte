@@ -5,6 +5,8 @@
 
   import { createEventDispatcher } from 'svelte'
 
+  export let info
+
   const dispatch = createEventDispatcher()
 
   function next() {
@@ -22,6 +24,8 @@
       Stage Finished!
     </p>
   </div>
-  <button type="submit" class="btn btn-primary rounded-full" on:click={next}>Continue</button>
+  {#if $info.hasRemainingCards}
+    <button type="submit" class="btn btn-primary rounded-full" on:click={next}>Continue</button>
+  {/if}
   <button type="submit" class="btn btn-primary rounded-full" on:click={finish}>Finish</button>
 </div>
