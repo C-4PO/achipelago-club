@@ -17,6 +17,7 @@ export const deckReviewService = ({
   const reviewDeck = ({ context, event }) => context
 
   const reviewCard = ({ context, event }) => {
+    debugger
     const reviews = Object.values(event.results).map(({ review }) => review)
     // Editiong pointer to effect all instances of the pile
     context.currentPile.card.reviews = reviews
@@ -24,6 +25,7 @@ export const deckReviewService = ({
     let drawPile = context.drawPile
 
     if (context.stage === `review`) {
+      debugger
       drawPile = drawPile.filter(({ reviews }) => reviews.length > 0)
      /*
       .sort((a, b) => {
@@ -42,7 +44,8 @@ export const deckReviewService = ({
     }
   }
 
-  const performStageGenerate = ({ context, event }) => {
+  const performStageGenerate = async ({ context, event }) => {
+
     return loadStage({
       stage: context.stage,
       lessonType: `story`,

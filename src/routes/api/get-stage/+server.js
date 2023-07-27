@@ -2,8 +2,7 @@ import { getStoryDeck } from '$lib/features/decks/functions';
 import { normalizeStoryDeck } from '$lib/features/decks/normalizers';
 import { generateLesson } from '$lib/features/lessons/functions';
 
-export const GET = async ({ request, url, locals: { supabase, getSession }}) => {
-  debugger
+export const GET = async ({ request, url, locals: { supabase, getSession }}) => {  
   const session = await getSession()
   const { user } = session || {}
 

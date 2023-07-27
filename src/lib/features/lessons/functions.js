@@ -3,7 +3,6 @@
 import { getSidesForRead, getSectionsForReview, isReviewDue } from '$lib/features/lessons/utilities.js'
 
 export let generateLesson = async ({ deck, prevStage, lessonType }) => {
-  debugger
   const {
     id,
     title,
