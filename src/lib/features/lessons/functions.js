@@ -39,14 +39,14 @@ export let generateLesson = async ({ deck, prevStage, lessonType }) => {
           stage: `review`,
           gradeWeight: 1,
           sides: section.sides,
-          review: section.review,
+          reviews: [section.review],
         })
       }
     }
     drawPile.sort((a, b) => {
-      if (a.review.interval > b.review.interval) {
+      if (a.reviews[0].interval > b.reviews[0].interval) {
         return -1
-      } else if (a.review.interval === b.review.interval) {
+      } else if (a.reviews[0].interval === b.reviews[0].interval) {
         return 0
       } else {
         return 1

@@ -45,7 +45,7 @@ export const deckReviewService = ({
   }
 
   const performStageGenerate = async ({ context, event }) => {
-
+    debugger
     return loadStage({
       stage: context.stage,
       lessonType: `story`,

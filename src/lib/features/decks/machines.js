@@ -133,6 +133,7 @@ export const deckReviewMachine = createMachine(
         }
       }),
       loadStage: assign((context, event) => {
+        debugger
         const stage = event.data.stage
         const drawPile = event.data.drawPile.map((pile) => {
           return {

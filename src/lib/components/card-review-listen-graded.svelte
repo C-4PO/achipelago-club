@@ -66,9 +66,7 @@
   }
 
   const next = (response) => {
-    dispatch('next', {
-      action: `next`
-    })
+    dispatch('next', {})
   }
 
   function init(el){

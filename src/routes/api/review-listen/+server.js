@@ -67,7 +67,6 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
         review: updatedReview,
         grade: cardGrade,
         score,
-        
         totalScore,
         inputWordDetails,
         referenceWordDetails,

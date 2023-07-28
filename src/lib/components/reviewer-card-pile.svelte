@@ -14,7 +14,6 @@
   const onFinish = async () => {
     dispatch('next', {
       results: shared,
-      action: finalAction,
     })
   }
 
@@ -28,6 +27,7 @@
   } = cardReviewService({ pile, onFinish })
 
   const next = ({ detail }) => {
+    debugger
     shared = {
       ...shared,
       ...detail
