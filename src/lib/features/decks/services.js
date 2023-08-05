@@ -17,24 +17,29 @@ export const deckReviewService = ({
   const reviewDeck = ({ context, event }) => context
 
   const reviewCard = ({ context, event }) => {
-    debugger
     const reviews = Object.values(event.results).map(({ review }) => review)
     // Editiong pointer to effect all instances of the pile
-    context.currentPile.card.reviews = reviews
-    context.currentPile.sides = getSidesForRead({ reviews })
     let drawPile = context.drawPile
 
     if (context.stage === `review`) {
-      debugger
-      drawPile = drawPile.filter(({ reviews }) => reviews.length > 0)
-     /*
-      .sort((a, b) => {
-        const aRating = a.reviews.reduce((acc, { rating }) => acc + rating, 0) / a.reviews.length
-        const bRating = b.reviews.reduce((acc, { rating }) => acc + rating, 0) / b.reviews.length
+      context.currentPile.card.reviews = reviews
+      context.currentPile.sides = getSidesForRead({ reviews })
+
+      drawPile = drawPile.filter(({ sides }) => sides.length > 0)
+
+      const leadingCard = drawPile.shift()
+      
+      drawPile = drawPile.sort((a, b) => {
+        const aRating = a.reviews.reduce((acc, { repetition }) => acc + repetition, 0) / a.reviews.length
+        const bRating = b.reviews.reduce((acc, { repetition }) => acc + repetition, 0) / b.reviews.length
         return bRating - aRating
+      })
+      if (leadingCard) {
+        drawPile = [...drawPile, leadingCard]
       }
-      */
     } else if (context.stage === `read`) {
+      context.currentPile.card.reviews = reviews
+      context.currentPile.sides = getSidesForRead({ reviews })
       drawPile.shift()
     }
 
@@ -45,7 +50,6 @@ export const deckReviewService = ({
   }
 
   const performStageGenerate = async ({ context, event }) => {
-    debugger
     return loadStage({
       stage: context.stage,
       lessonType: `story`,

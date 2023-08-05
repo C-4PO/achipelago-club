@@ -27,7 +27,6 @@
   } = cardReviewService({ pile, onFinish })
 
   const next = ({ detail }) => {
-    debugger
     shared = {
       ...shared,
       ...detail
