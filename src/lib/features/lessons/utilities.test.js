@@ -45,5 +45,3 @@ test("gradeCard - completely wrong", () => {
 
   expect(data.grade).toBe(3);
 })
-
-

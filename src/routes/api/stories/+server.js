@@ -8,7 +8,6 @@ import { createSentenceCards } from '$lib/features/cards/functions.js'
 import { createCardsReviews } from '$lib/features/reviews/functions.js'
 
 export const POST = async ({ request, locals: { supabase, getSession }}) => {
-  debugger
   const session = await getSession()
   const { user } = session || {}
 
