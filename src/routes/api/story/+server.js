@@ -1,8 +1,9 @@
 
 import { serializeStory } from '$lib/features/story/serializers.js'
 import { processStory } from '$lib/features/story/utilities.js'
-import { translate, saveStory } from '$lib/features/story/functions.js'
+import { saveStory } from '$lib/features/story/functions.js'
 import { getPersonalDeck } from '$lib/features/story/functions.js'
+import { translate } from '$lib/features/text-to-speech/functions.js'
 
 export const POST = async ({ request, locals: { supabase, getSession } }) => {
   const session = await getSession()
@@ -17,7 +18,7 @@ export const POST = async ({ request, locals: { supabase, getSession } }) => {
   title = title ? title : originalStory.split(`.`)[0]
 
   try {
-    translatedStory = translatedStory ? translatedStory : originalStory ? await translate({ text: originalStory }) : ''
+    translatedStory = translatedStory ? translatedStory : originalStory ? await translate({ text: originalStory, target: `en` }) : ''
     console.log('translatedStory', translatedStory)
   } catch (error) {
     console.log(`error`, error)
