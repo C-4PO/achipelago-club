@@ -19,13 +19,13 @@
 
 </script>
 <Reviewer
-  bind:cardIndex={$context.currentCardIndex}
+  bind:cardIndex={$context.currentPileIndex}
   bind:slides={slides}
   enableReview={!$step[states.intro]}
   let:slide={slide}
   let:index={index}
 > 
-  <ReviewerCard isFlipped={index === $context.currentCardIndex && !$step[states.intro]}>
+  <ReviewerCard isFlipped={index === $context.currentPileIndex && !$step[states.intro]}>
     <div slot="front" class="rounded-[50px] h-full w-full overflow-hidden bg-secondary">
       {#if $step[states.intro]}
         <div class="absolute top-[50%] left-[50%]" style="transform: translate(-50%, -50%);">

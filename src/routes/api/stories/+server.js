@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty.js'
 
-import { translate } from '$lib/features/translate/functions.js'
+import { translate } from '$lib/features/text-to-speech/functions.js'
 import { createSentences } from '$lib/features/sentences/functions.js'
 import { serializeSentences } from '$lib/features/sentences/serializers.js'
 import { createDeck, associateCardsToDeck } from '$lib/features/decks/functions.js'
@@ -22,7 +22,7 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
       originalStory,
     } = await request.json()
 
-    let { data: translatedStory, ...translationError } = await translate({ text: originalStory })
+    let { data: translatedStory, ...translationError } = await translate({ text: originalStory, target: `en`  })
 
     if (!isEmpty(translationError)) {
       console.error(`translationError`, translationError)

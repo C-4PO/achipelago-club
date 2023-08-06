@@ -13,6 +13,7 @@
   let submitPromise = null
 
   function handleTextSubmit() {
+    if (submitPromise) return
     submitPromise = gradeCardWrite({
       text: userInput.trim(),
       cardId: card.id
@@ -25,15 +26,27 @@
       throw error
     })
   }
+
+  function handleKey(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      if (submitPromise) return
+      handleTextSubmit()
+    }
+  }
 </script>
 
-<div class="p-5 flex flex-col gap-4 h-full">
+<div class="p-5 flex flex-col gap-4 h-full" on:keydown={handleKey}>
   <div class="h-full flex items-center justify-center flex-col gap-2 rounded-lg" style="flex-grow: 0; overflow-y: auto;">
     <p class="text-white flex flex-wrap justify-center cardwidth:text-2xl text-xl">
       <ReviewerWords words={card.words}/>
     </p>
     <div class="w-full p-3 h-1/2">
-      <textarea class="text-area text-black p-2 cardWidth:p-3 h-full rounded-3xl w-full bg-white resize-none" bind:value={userInput} placeholder="Translate to english..."></textarea>
+      <textarea
+        class="text-area text-black p-2 cardWidth:p-3 h-full rounded-3xl w-full bg-white resize-none"
+        bind:value={userInput}
+        placeholder="Translate to english..."
+      />
     </div>
   </div>
   {#if !submitPromise}

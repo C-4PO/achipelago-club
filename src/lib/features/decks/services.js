@@ -1,44 +1,78 @@
 import { useMachine } from '$lib/features/utilities.js';
 import { stateIndex } from '$lib/features/utilities.js';
-import { getSidesFromReviews } from '$lib/features/lessons/utilities.js';
+import { getSidesForRead } from '$lib/features/lessons/utilities.js';
+import { loadStage } from '$lib/features/lessons/api.js';
 import { derived } from 'svelte/store';
+import { goto } from '$app/navigation';
 
 import { deckReviewMachine } from './machines.js'
 
 export const deckReviewService = ({
-  lesson
+  drawPile,
+  stage,
+  deckId,
+  cards,
 }) => {
-  const fetchDrawPile = ({ context: { currentIndex, _cards , ...rest}, event }) => {
-    return _cards.slice(currentIndex, lesson.length)
-  }
 
   const reviewDeck = ({ context, event }) => context
-  
-  const performReview = ({ context,  event }) => {
+
+  const reviewCard = ({ context, event }) => {
     const reviews = Object.values(event.results).map(({ review }) => review)
-    const sides = getSidesFromReviews({ reviews })    
-    return Promise.resolve({
-      reviews,
-      sides,
+    // Editiong pointer to effect all instances of the pile
+    let drawPile = context.drawPile
+
+    if (context.stage === `review`) {
+      context.currentPile.card.reviews = reviews
+      context.currentPile.sides = getSidesForRead({ reviews })
+
+      drawPile = drawPile.filter(({ sides }) => sides.length > 0)
+
+      const leadingCard = drawPile.shift()
+      
+      drawPile = drawPile.sort((a, b) => {
+        const aRating = a.reviews.reduce((acc, { repetition }) => acc + repetition, 0) / a.reviews.length
+        const bRating = b.reviews.reduce((acc, { repetition }) => acc + repetition, 0) / b.reviews.length
+        return bRating - aRating
+      })
+      if (leadingCard) {
+        drawPile = [...drawPile, leadingCard]
+      }
+    } else if (context.stage === `read`) {
+      context.currentPile.card.reviews = reviews
+      context.currentPile.sides = getSidesForRead({ reviews })
+      drawPile.shift()
+    }
+
+    return {
+      ...context,
+      drawPile,
+    }
+  }
+
+  const performStageGenerate = async ({ context, event }) => {
+    return loadStage({
+      stage: context.stage,
+      lessonType: `story`,
+      deckId,
     })
   }
-  const reviewCard = ({ context, event }) => {
-    return context
-  }
-  const performSummerize = ({ context, event }) => Promise.resolve()
+
   const calculateFinished = ({ context, event}) => {
-    return false
+    return context.drawPile.length === 0
   }
+
+  const finish = () => goto(`/story-list`)
 
   const { state, send, service } = useMachine(deckReviewMachine, {
     context: {
-      _cards: lesson,
-      fetchDrawPile,
+      cards,
+      stage,
+      drawPile,
       reviewCard,
       reviewDeck,
-      performReview,
-      performSummerize,
       calculateFinished,
+      finish,
+      performStageGenerate,
     }
   })
 
@@ -50,6 +84,13 @@ export const deckReviewService = ({
   const context = derived(
     state,
     $state => $state.context
+  );
+
+  const info = derived(
+    state,
+    $state => ({
+      hasRemainingCards: $state.context.drawPile.length > 0
+    })
   );
 
   const slides = derived(
@@ -66,6 +107,10 @@ export const deckReviewService = ({
     send(`REVIEWED`, detail )
   }
 
+  const onFinish = () => {
+    send(`FINISH`)
+  }
+
   return {
     slides,
     onNext,
@@ -73,6 +118,8 @@ export const deckReviewService = ({
     context,
     step,
     send,
+    onFinish,
     service,
+    info,
   }
 }

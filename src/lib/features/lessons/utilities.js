@@ -10,7 +10,7 @@ export function gradeCard({ sentence, inputText, confidence = 1 }) {
       totalScore
     } = stringComparison({ inputText, referenceString: sentence });
 
-    const grade = Math.ceil(((score / totalScore) * confidence) * 5);
+    const grade = Math.max(0, Math.ceil(((score / totalScore) * confidence) * 5));
 
     return {
       data: {
@@ -23,55 +23,43 @@ export function gradeCard({ sentence, inputText, confidence = 1 }) {
     };
 }
 
+export function gradeWrittenCard({ sentence, inputText }) {
+  const {
+    inputWordDetails,
+    referenceWordDetails,
+    totalScore,
+    score,
+  } = stringComparison({ inputText, referenceString: sentence });
+
+  const additionalWords = inputWordDetails.filter(({ referenceIndex, isMistake }) => referenceIndex === null && !isMistake);
+  const mistakeWords = inputWordDetails.filter(({ isMistake }) => isMistake);
+  const missingWords = referenceWordDetails.filter(({ inputIndex }) => inputIndex === null);
+
+  const grade = Math.max(0, Math.floor(5 - (Math.ceil(additionalWords.length * 0.5) + (missingWords.length - mistakeWords.length))));
+  
+  return {
+    data: {
+      grade,
+      score,
+      totalScore,
+      inputWordDetails,
+      referenceWordDetails
+    }
+  };
+}
+
 function stringComparison({ inputText, referenceString }) {
   const inputWords = cleanSentence(inputText).trim().split(' ');
   const referenceWords = cleanSentence(referenceString).trim().split(' ');
 
-  const inputWordCount = wordCount(inputWords);
-  const referenceWordCount = wordCount(referenceWords);
+  const lcs = longestCommonSubsequence(inputWords, referenceWords);
 
-  let score = 0;
+  const { inputWordDetails, referenceWordDetails } = wordDetails(inputWords, referenceWords, lcs);
 
-  for (let i = 0; i < inputWords.length; i++) {
-      const word = inputWords[i];
-      if (referenceWordCount[word]) {
-          score += 1;
-          if (inputWordCount[word] === referenceWordCount[word]) {
-              score += 1;
-          }
-          if (i < referenceWords.length && word === referenceWords[i]) {
-              score += 1;
-          } else {
-              score -= 1;
-          }
-      } else {
-          score -= 1;
-      }
-  }
+  const score = lcs.length;
+  const totalScore = referenceWords.length;
 
-  for (const word in referenceWordCount) {
-      if (!inputWordCount[word]) {
-          score -= 1;
-      }
-  }
-
-  // Add Longest Common Subsequence Score
-  const lcsScore = longestCommonSubsequence(inputWords, referenceWords).length;
-  score += lcsScore;
-
-  const { inputWordDetails, referenceWordDetails } = wordDetails(inputWords, referenceWords);
-
-  const maxPossibleLcsScore = Math.min(inputWords.length, referenceWords.length);
-  const totalScore = 3 * referenceWords.length + maxPossibleLcsScore;
-
-  return { score, inputWordDetails, referenceWordDetails, totalScore };
-}
-
-function wordCount(wordArray) {
-  return wordArray.reduce((count, word) => {
-      count[word] = (count[word] || 0) + 1;
-      return count;
-  }, {});
+  return { inputWordDetails, referenceWordDetails, score, totalScore };
 }
 
 function longestCommonSubsequence(inputWords, referenceWords) {
@@ -110,42 +98,81 @@ function longestCommonSubsequence(inputWords, referenceWords) {
   return matrix[inputWords.length][referenceWords.length].sequence;
 }
 
-function wordDetails(inputWords, referenceWords) {
-  const lcs = new Set(longestCommonSubsequence(inputWords, referenceWords));
+function levenshteinDistance(a, b) {
+  const matrix = [];
+
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+
+  return matrix[b.length][a.length];
+}
+
+function wordDetails(inputWords, referenceWords, lcs) {
+  const lcsSet = new Set(lcs);
 
   let inputWordDetailsArr = [];
   let referenceWordDetailsArr = [];
 
   inputWords.forEach((word, index) => {
-      const inputIndex = index;
-      const referenceIndex = referenceWords.indexOf(word) !== -1 ? referenceWords.indexOf(word) : null;
-      const inLcs = lcs.has(word);
+    const inputIndex = index;
+    const referenceIndex = referenceWords.indexOf(word) !== -1 ? referenceWords.indexOf(word) : null;
+    const inLcs = lcsSet.has(word);
 
-      inputWordDetailsArr.push({ word, inputIndex, referenceIndex, inLcs, displayWord: word });
+    // Determine if the word is a spelling mistake
+    let isMistake = false;
+    if (!inLcs) {
+      for (const refWord of referenceWords) {
+        if (levenshteinDistance(word, refWord) === 1) {
+          isMistake = true;
+          break;
+        }
+      }
+    }
+
+    inputWordDetailsArr.push({ word, inputIndex, referenceIndex, inLcs, isMistake, displayWord: word });
   });
 
   referenceWords.forEach((word, index) => {
-      const referenceIndex = index;
-      const inputIndex = inputWords.indexOf(word) !== -1 ? inputWords.indexOf(word) : null;
-      const inLcs = lcs.has(word);
+    const referenceIndex = index;
+    const inputIndex = inputWords.indexOf(word) !== -1 ? inputWords.indexOf(word) : null;
+    const inLcs = lcsSet.has(word);
 
-      referenceWordDetailsArr.push({ word, inputIndex, referenceIndex, inLcs, displayWord: word });
+    referenceWordDetailsArr.push({ word, inputIndex, referenceIndex, inLcs, displayWord: word });
   });
 
   return { inputWordDetails: inputWordDetailsArr, referenceWordDetails: referenceWordDetailsArr };
 }
 
-function isReviewDue({ review }) {
+export function isReviewDue({ review }) {
   const ThreePMTommorow = dayjs().add(1, 'day').startOf('day').add(3, 'hour');
   return dayjs(review.due_date).isBefore(ThreePMTommorow)
 }
 
-export function getSidesFromReviews({ reviews }) {
+export function getSidesForRead({ reviews }) {
   const sidesMap = {
-    SPEAK: [
-      {type: `ReadListen`},
-      {type: `ReadListenGraded`},
-    ],
+    // SPEAK: [
+    //   {type: `ReadListen`},
+    //   {type: `ReadListenGraded`},
+    // ],
     WRITE: [
       {type: `ReadTranslate`},
       {type: `ReadTranslateGraded`},
@@ -162,3 +189,30 @@ export function getSidesFromReviews({ reviews }) {
 
   return sides;
 }
+
+export function getSectionsForReview({ reviews }) {
+  const sidesMap = {
+    // SPEAK: [
+    //   {type: `ReadListen`},
+    //   {type: `ReadListenGraded`},
+    // ],
+    WRITE: [
+      {type: `ReadTranslate`},
+      {type: `ReadTranslateGraded`},
+    ],
+  }
+
+  let sections = {}
+  for (const reviewType of Object.keys(sidesMap)) {
+    const review = reviews.find(({ type }) => type === reviewType)
+    if (!review || isReviewDue({ review })) {
+      sections = {...sections, [reviewType]: {
+        sides: sidesMap[reviewType],
+        review,
+      }}
+    }
+  }
+
+  return sections;
+}
+

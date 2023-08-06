@@ -1,5 +1,5 @@
 import { getCardByCardId } from "$lib/features/cards/functions"
-import { gradeCard } from "$lib/features/lessons/utilities"
+import { gradeWrittenCard } from "$lib/features/lessons/utilities"
 import { normalizeSentenceCards } from "$lib/features/cards/normalizers"
 import { reviewCard } from "$lib/features/reviews/utilities"
 import { updateCardReview } from "$lib/features/reviews/functions"
@@ -31,7 +31,7 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
       totalScore,
       inputWordDetails,
       referenceWordDetails
-    }, error: cardGradeError } = gradeCard({
+    }, error: cardGradeError } = gradeWrittenCard({
       sentence: sentenceCard.translationSentence,
       inputText: text,
     })

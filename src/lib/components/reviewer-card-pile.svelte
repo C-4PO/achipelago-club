@@ -5,9 +5,11 @@
   import { createEventDispatcher } from 'svelte'
 
   export let pile
+  export let info
 
   const dispatch = createEventDispatcher()
   let shared = {}
+  let finalAction = `next`
 
   const onFinish = async () => {
     dispatch('next', {
@@ -16,7 +18,12 @@
   }
 
   const {
-    isFlipped, front, back, step, send, onNext
+    isFlipped,
+    front,
+    back,
+    step,
+    send,
+    onNext,
   } = cardReviewService({ pile, onFinish })
 
   const next = ({ detail }) => {
@@ -25,6 +32,10 @@
       ...detail
     }
     onNext({ shared })
+  }
+
+  const finish = ({ detail }) => {
+    dispatch('finish', detail)
   }
 </script>
 
@@ -37,7 +48,9 @@
           bind:card={pile.card}
           bind:type={$front.type}
           bind:shared={shared}
+          info={info}
           on:next={next}
+          on:finish={finish}
         />
       {/if}
     </div>
@@ -48,7 +61,9 @@
           bind:card={pile.card}
           bind:type={$back.type}
           bind:shared={shared}
+          info={info}
           on:next={next}
+          on:finish={finish}
         />
       {/if}
     </div>

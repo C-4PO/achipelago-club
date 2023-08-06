@@ -1,21 +1,16 @@
-import { redirect } from '@sveltejs/kit';
 import { getStoryDeck } from '$lib/features/decks/functions';
 import { normalizeStoryDeck } from '$lib/features/decks/normalizers';
 import { generateLesson } from '$lib/features/lessons/functions';
 
-export async function load({ params, locals: { supabase }, ...rest }) {
+export const GET = async ({ request, url, locals: { supabase, getSession }}) => {
+  const session = await getSession()
+  const { user } = session || {}
+
+  const deckId = Number(url.searchParams.get('deckId'))
+  const lessonType = url.searchParams.get('lessonType')
+  const prevStage = url.searchParams.get('stage') || ``
 
   try {
-    // const { user } = await getSession()
-
-    const {
-      id: deckId,
-    }  = params
-
-    // if (!user) {
-    //   throw redirect(303, '/')
-    // }
-
     const { data: dbStoryDeck, error: dbStoryDeckError } = await getStoryDeck(supabase, {
       deckId,
     })
@@ -39,28 +34,16 @@ export async function load({ params, locals: { supabase }, ...rest }) {
     }
 
     const {
-      id,
-      title,
-      cards
-    } = storyDeck;
-
-    // TODO: generate lession function given sides 
-
-    const {
       drawPile,
       stage,
-     } = await generateLesson({ deck: storyDeck, prevStage: ``, lessonType: `` })
+    } = await generateLesson({ deck: storyDeck, prevStage, lessonType })
 
-    return {
-      title,
-      drawPile,
-      cards,
+    return new Response(JSON.stringify({
       stage,
-      deckId,
-    }
-  } catch (e) {
-    return {
-      error: e
-    }
+      drawPile,
+    }), { status: 200 })
+  } catch (error) {
+    console.error(`error`, error)
+    return new Response(JSON.stringify({ error }), { status: 500 })
   }
 }

@@ -1,8 +1,18 @@
 import { TextToSpeechClient } from "@google-cloud/text-to-speech"
 import { SpeechClient } from '@google-cloud/speech';
+import { v2 } from '@google-cloud/translate';
+import {
+  GOOGLE_APPLICATION_CREDENTIALS_ENCODED
+  } from '$env/static/private'
 
-const client = new TextToSpeechClient();
-const speechClient = new SpeechClient();
+
+
+const credentials = JSON.parse(Buffer.from(GOOGLE_APPLICATION_CREDENTIALS_ENCODED, 'base64').toString());
+
+
+const client = new TextToSpeechClient({ credentials });
+const speechClient = new SpeechClient({ credentials });
+const translateClient = new v2.Translate({ credentials });
 
 export const textToSpeech = async({ text }) => {
   try {
@@ -46,7 +56,7 @@ export const speechToText = async({ audioFile, audioType }) => {
       audio: audio,
     };
 
-    const [response] =  await speechClient.recognize(request);
+    const [ response ] =  await speechClient.recognize(request);
 
     const transcription = response.results
       .map(result => result.alternatives[0].transcript)
@@ -61,5 +71,15 @@ export const speechToText = async({ audioFile, audioType }) => {
     return { error };
   }
 }
+
+export const translate = async({ text = '', target = `en` }) => {
+  try {
+    const [translation] = await translateClient.translate(text, target);
+    return { data: translation }
+  } catch (error) {
+    return { error }
+  }
+}
+
 
 

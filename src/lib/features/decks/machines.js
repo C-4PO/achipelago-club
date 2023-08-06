@@ -4,18 +4,21 @@ export const deckReviewMachine = createMachine(
   {
     id: `deck-review`,
     initial: 'intro',
+    predictableActionArguments: true,
     context: {
-      currentIndex: 0,
-      currentCard: null,
-      tableCards: [{key: 1}, { key: 2}],
+      stage: 'read',
       drawPile: [],
+      cards: [],
+      currentIndex: 0,
+      currentPile: null,
+      tableCards: [{key: 1}, { key: 2}],
       lastCard: null,
-      fetchDrawPile: ({ context, event }) => [],
       reviewCard: ({ context, event }) => context,
       reviewDeck: ({ context, event }) => context,
-      performReview: ({ context,  event }) => Promise.resolve(),
       performSummerize: ({ context, event }) => Promise.resolve(),
       calculateFinished: ({ context, event }) => false,
+      performStageGenerate: ({ context, event }) => Promise.resolve(),
+      finish: () => {},
     },
     states: {
       intro: {
@@ -34,23 +37,44 @@ export const deckReviewMachine = createMachine(
       review: {
         entry: ['drawCard'],
         on: {
-          REVIEWED: {
-            target: 'finishReview',
-          }
+          REVIEWED: [
+            {
+              target: 'finishReview',
+              actions: ['increment', 'reviewCard']
+            },
+          ]
         }
       },
       finishReview: {
+        always: [
+          {
+            target: 'generateStage',
+            cond: 'isFinished',
+          },
+          {
+            target: 'review',
+          }
+        ]
+      },
+      evalateStage: {
+        entry: ['drawStage'],
+        on: {
+          REVIEWED: {
+            target: 'review',
+            actions: ['increment']
+          },
+          FINISH: {
+            target: 'finalizeDeck',
+          }
+        }
+      },
+      generateStage: {
         invoke: {
-          src: (context, event) => context.performReview({ context, event }),
+          src: (context, event) => context.performStageGenerate({ context, event }),
           onDone: [
             {
-              target: 'finalizeDeck',
-              cond: 'isFinished',
-              actions: ['reviewCard']
-            },
-            {
-              target: 'review',
-              actions: ['reviewCard', 'increment']
+              target: 'evalateStage',
+              actions: ['loadStage']
             }
           ]
         }
@@ -67,6 +91,7 @@ export const deckReviewMachine = createMachine(
         }
       },
       summary: {
+        entry: ['finish'],
         type: 'final'
       }
     },
@@ -74,19 +99,51 @@ export const deckReviewMachine = createMachine(
   {
     actions: {
       drawCard: assign((context, event) => {
-        const lastCard = context.currentCard
-        const drawPile = context.fetchDrawPile({ context, event })
-        const currentCard = drawPile[0]
-  
+        const lastCard = context.currentPile
+        const currentPile = context.drawPile[0]
         return {
           ...context,
           lastCard,
-          currentCard,
+          currentPile,
           tableCards: [
             ...context.tableCards.slice(0, context.currentIndex),
-            { key: context.currentIndex + 1, ...currentCard, initialized: true},
+            { key: context.currentIndex + 1, pile: currentPile, initialized: true},
             { key: context.currentIndex + 2 }
           ]
+        }
+      }),
+      drawStage: assign((context, event) => {
+        const lastCard = context.currentPile
+        const currentPile = {
+          sides: [
+            {
+              type: `stageSummary`
+            }
+          ]
+        }
+        return {
+          ...context,
+          lastCard,
+          currentPile,
+          tableCards: [
+            ...context.tableCards.slice(0, context.currentIndex),
+            { key: context.currentIndex + 1, pile: currentPile, initialized: true},
+            { key: context.currentIndex + 2 }
+          ]
+        }
+      }),
+      loadStage: assign((context, event) => {
+        const stage = event.data.stage
+        const drawPile = event.data.drawPile.map((pile) => {
+          return {
+            ...pile,
+            card: context.cards.find((card) => card.id === pile.cardId)
+          }
+        })
+        return {
+          ...context,
+          stage,
+          drawPile,
         }
       }),
       reviewCard: assign((context, event) => {
@@ -99,7 +156,10 @@ export const deckReviewMachine = createMachine(
         currentIndex: (context) => {
           return context.currentIndex + 1
         }
-      })
+      }),
+      finish: (context, event) => {
+        context.finish()
+      }
     },
     guards: {
       isFinished: (context, event) => {

@@ -11,8 +11,6 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
 
   const { file: audioFile, audioType, cardId  } = Object.fromEntries(await request.formData())
 
-
-
   try {
     if (!user) {
       console.error(`You must be logged in to create a story.`)
@@ -65,7 +63,7 @@ export const POST = async ({ request, locals: { supabase, getSession }}) => {
     }
 
     return new Response(JSON.stringify(
-      { 
+      {
         review: updatedReview,
         grade: cardGrade,
         score,
