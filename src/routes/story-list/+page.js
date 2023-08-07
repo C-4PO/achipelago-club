@@ -1,4 +1,3 @@
-import { getStories } from '$lib/features/story/functions.js';
 import { getDecks } from '$lib/features/decks/functions.js';
 import { normalizeShallowDeck } from '$lib/features/decks/normalizers.js';
 import { redirect } from '@sveltejs/kit';
@@ -22,7 +21,9 @@ export async function load({ parent }) {
     if (deck.type === 'REVIEW') {
       acc.reviewDecks.push(deck)
     } else if (deck.type === 'STORY') {
-      acc.storyDecks.push(deck)
+      if ((deck.reviewSummary.totalCardsDue > 0 || deck.reviewSummary.totalCardsOverdue) > 0 || deck.reviewSummary.totalNewCards > 0) {
+        acc.storyDecks.push(deck)
+      }
     }
     return acc
   }, { reviewDecks: [], storyDecks: [] })

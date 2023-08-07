@@ -1,5 +1,6 @@
 import { tomorrow } from '$lib/features/concept-review/utilities.js';
 import dayjs from 'dayjs';
+import { isReviewDue, isReviewOverdue } from '../lessons/utilities.js';
 
 export const normalizeReview = ({ review }) => {
   const {
@@ -21,24 +22,28 @@ export const normalizeReview = ({ review }) => {
   }
 }
 
-export const summerizeReviews = ({ reviews = [] }) => {
+export const summerizeReviews = ({ reviews = [], cards }) => {
+  console.log({ reviews })
   if (reviews.length === 0) {
     return {
-      totalCards: 0,
+      totalReviews: 0,
       totalCardsDue: 0,
       totalCardsOverdue: 0,
       totalNewCards: 0,
     }
   }
 
-  const totalCardsDue = reviews.filter(({ due_date }) => dayjs(due_date).isAfter(dayjs()) && dayjs(due_date).isBefore(tomorrow())).length;
-  const totalCardsOverdue = reviews.filter(({ due_date, interval }) => dayjs(due_date).isBefore(dayjs()) && interval > 3).length;
-  const totalNewCards = reviews.filter(({ repetition }) => repetition === 0).length;
-  
+  const totalCardsDue = reviews.filter((review) => isReviewDue({ review }) && !isReviewOverdue({ review })).length;
+  const totalCardsOverdue = reviews.filter((review) => isReviewOverdue({ review })).length;
+  // cards that are not associated with a review by cardId
+
+  console.log(`crds length`, cards.length)
+  const totalCardsWithoutReview = cards.filter(({ id }) => !reviews.find(({ card_id }) => card_id === id)).length;
+
   return {
-    totalCards: reviews.length,
+    totalReviews: reviews.length,
     totalCardsDue: totalCardsDue,
     totalCardsOverdue: totalCardsOverdue,
-    totalNewCards,
+    totalNewCards: totalCardsWithoutReview,
   }
 }

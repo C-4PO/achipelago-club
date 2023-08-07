@@ -43,7 +43,6 @@
             <div class="card-body flex">
               <h2 class="card-title">{story.title}</h2>
               <p class="flex gap-1 flex-wrap">
-                <span class="badge badge-secondary text-xs">Total {story.reviewSummary.totalCards}</span>
                 <span class="badge badge-secondary text-xs">Due {story.reviewSummary.totalCardsDue}</span>
                 <span class="badge badge-secondary text-xs">Overdue {story.reviewSummary.totalCardsOverdue}</span>
                 <span class="badge badge-secondary text-xs">New {story.reviewSummary.totalNewCards}</span>

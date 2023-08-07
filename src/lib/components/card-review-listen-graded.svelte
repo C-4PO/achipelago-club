@@ -5,6 +5,7 @@
   import { createEventDispatcher } from 'svelte'
 
   export let result
+  export let card
   const dispatch = createEventDispatcher()
 
   const GREEN = '#00A676'
@@ -16,8 +17,9 @@
     grade,
     score,
     totalScore,
-    inputWordDetails,
-    referenceWordDetails,
+    inputWordDetails = [],
+    allWordDetails = [],
+    referenceWordDetails = [],
     cardId,
     confidence,
   } = result
@@ -32,6 +34,11 @@
     index: detectedWord.referenceIndex,
     color: getWordColor(detectedWord),
   }))
+
+  const originalWordsindicies = card.words.map((detectedWord, index) => ({
+    index: index,
+  }))
+
 
   const colorPriorities = {
     [RED]: 1,
@@ -88,6 +95,12 @@
         <h3 class="text-white text-2xl font-bold">Try again!</h3>
       {/if}
     </header>
+    <div class="rounded-3xl bg-white p-3 text-black">
+      <h3 class="text-xl font-bold text-center pb-1">Detected Words</h3>
+      <p class="flex justify-center flex-wrap">
+        <ReviewerWords words={card.words} colorIndices={originalWordsindicies} colorPriorities={colorPriorities} />
+      </p>
+    </div>
     <div class="rounded-3xl bg-white p-3 text-black">
       <h3 class="text-xl font-bold text-center pb-1">Detected Words</h3>
       <p class="flex justify-center flex-wrap">

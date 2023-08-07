@@ -167,6 +167,10 @@ export function isReviewDue({ review }) {
   return dayjs(review.due_date).isBefore(ThreePMTommorow)
 }
 
+export function isReviewOverdue({ review }) {
+  return dayjs(review.due_date).isBefore(dayjs())
+}
+
 export function getSidesForRead({ reviews }) {
   const sidesMap = {
     // SPEAK: [
